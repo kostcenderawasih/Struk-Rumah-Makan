@@ -238,7 +238,7 @@
                     <div class="bg-gray-100 p-4 rounded-lg">
                         <h4 class="text-lg font-semibold mb-3 text-center">📄 Preview Struk</h4>
                         <div class="bg-white rounded border-2 border-dashed border-gray-300 receipt-preview">
-                            <div class="text-center mb-1">
+                            <div class="text-center mb-1 leading-tight">
                                 <div class="font-bold text-center" id="previewBusinessName">RUMAH MAKAN KLATEN MANOKWARI</div>
                                 <div class="text-xs text-center" id="previewBusinessAddress">Jl. Contoh No. 123</div>
                                 <div class="text-xs text-center" id="previewBusinessPhone">Telp: (0986) 123456</div>
@@ -281,7 +281,7 @@
                                 </div>
                             </div>
 
-                            <div class="text-center text-xs mt-2">
+                            <div class="text-center text-xs mt-1 leading-tight">
                                 <div>Terima Kasih</div>
                                 <div>Selamat Menikmati!</div>
                             </div>
@@ -293,7 +293,7 @@
 
         <!-- Receipt Template (Hidden) -->
         <div id="receiptTemplate" class="hidden print-only receipt-paper">
-            <div class="text-center" style="margin-bottom: 1mm;">
+            <div class="text-center" style="margin-bottom: 1mm; line-height: 0.9;">
                 <div style="font-weight: bold; font-size: 10px; text-align: center;" id="receiptBusinessName">RUMAH MAKAN KLATEN MANOKWARI</div>
                 <div style="font-size: 7px; text-align: center;" id="receiptBusinessAddress">Jl. Contoh No. 123</div>
                 <div style="font-size: 7px; text-align: center;" id="receiptBusinessPhone">Telp: (0986) 123456</div>
@@ -336,7 +336,7 @@
                 </div>
             </div>
 
-            <div class="text-center" style="font-size: 7px; margin-top: 2mm;">
+            <div style="font-size: 7px; margin-top: 1mm; text-align: center; line-height: 0.9;">
                 <div>Terima Kasih</div>
                 <div>Selamat Menikmati!</div>
             </div>
@@ -719,8 +719,8 @@
             document.getElementById('previewTime').textContent = displayTime;
             document.getElementById('previewCashier').textContent = businessSettings.cashier;
             
-            // Update items with tighter spacing
-            const itemsHtml = currentOrder.map(item => `
+            // Update items with tighter spacing and separators
+            const itemsHtml = currentOrder.map((item, index) => `
                 <div style="display: flex; justify-content: space-between; margin-bottom: 1px;">
                     <span>${item.name}</span>
                 </div>
@@ -728,6 +728,7 @@
                     <span>${item.quantity} x Rp ${item.price.toLocaleString('id-ID')}</span>
                     <span>Rp ${(item.quantity * item.price).toLocaleString('id-ID')}</span>
                 </div>
+                ${index < currentOrder.length - 1 ? '<div style="border-bottom: 1px dashed #ccc; margin: 2px 0;"></div>' : ''}
             `).join('');
             
             document.getElementById('previewItems').innerHTML = itemsHtml;
@@ -904,8 +905,8 @@
                 fullReceipt += '--------------------------------\n';
                 fullReceipt += receiptText;
                 fullReceipt += '--------------------------------\n';
-                fullReceipt += '       Terima Kasih\n';
-                fullReceipt += '     Selamat Menikmati!\n\n\n\n';
+                fullReceipt += centerText('Terima Kasih') + '\n';
+                fullReceipt += centerText('Selamat Menikmati!') + '\n\n\n\n';
                 
                 // Convert to bytes
                 const data = encoder.encode(fullReceipt);
@@ -967,10 +968,13 @@
                     receiptText += `Waktu: ${displayTime}\n`;
                     receiptText += `Kasir: ${businessSettings.cashier}\n\n`;
                     
-                    // Add items
-                    currentOrder.forEach(item => {
+                    // Add items with separators
+                    currentOrder.forEach((item, index) => {
                         receiptText += `${item.name}\n`;
                         receiptText += `${item.quantity} x Rp ${item.price.toLocaleString('id-ID')} = Rp ${(item.quantity * item.price).toLocaleString('id-ID')}\n`;
+                        if (index < currentOrder.length - 1) {
+                            receiptText += '- - - - - - - - - - - - - - - -\n';
+                        }
                     });
                     
                     receiptText += `\nSubtotal: Rp ${subtotal.toLocaleString('id-ID')}\n`;
@@ -1002,8 +1006,8 @@
                     document.getElementById('receiptPaid').textContent = `Rp ${cashReceived.toLocaleString('id-ID')}`;
                     document.getElementById('receiptChange').textContent = `Rp ${change.toLocaleString('id-ID')}`;
                     
-                    // Populate items with tighter spacing
-                    const itemsHtml = currentOrder.map(item => `
+                    // Populate items with tighter spacing and separators
+                    const itemsHtml = currentOrder.map((item, index) => `
                         <div style="display: flex; justify-content: space-between; margin-bottom: 1px;">
                             <span>${item.name}</span>
                         </div>
@@ -1011,6 +1015,7 @@
                             <span>${item.quantity} x Rp ${item.price.toLocaleString('id-ID')}</span>
                             <span>Rp ${(item.quantity * item.price).toLocaleString('id-ID')}</span>
                         </div>
+                        ${index < currentOrder.length - 1 ? '<div style="border-bottom: 1px dashed #000; margin: 1mm 0;"></div>' : ''}
                     `).join('');
                     
                     document.getElementById('receiptItems').innerHTML = itemsHtml;
@@ -1037,5 +1042,5 @@
             }
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9919f481967aea76',t:'MTc2MDk3ODQwNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'991a12bbc1c7ea87',t:'MTc2MDk3OTY0NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
