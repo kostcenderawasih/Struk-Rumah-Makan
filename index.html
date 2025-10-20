@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kasir - Rumah Makan Klaten Manokwari</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body { 
+                margin: 0 !important; 
+                padding: 0 !important; 
+                font-size: 8px !important;
+                background: white !important;
+            }
+            @page {
+                size: 58mm auto;
+                margin: 0;
+            }
+        }
+        .receipt-paper {
+            width: 58mm;
+            font-family: 'Courier New', monospace;
+            font-size: 8px;
+            line-height: 1.1;
+            margin: 0;
+            padding: 2mm;
+            box-sizing: border-box;
+        }
+        .receipt-preview {
+            width: 58mm;
+            font-family: 'Courier New', monospace;
+            font-size: 9px;
+            line-height: 1.0;
+            margin: 0 auto;
+            padding: 2mm;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body class="h-full bg-gradient-to-br from-orange-50 to-red-50">
+    <div class="min-h-full">
+        <!-- Header -->
+        <header class="bg-gradient-to-r from-orange-600 to-red-600 text-white shadow-lg">
+            <div class="max-w-7xl mx-auto px-4 py-6">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h1 class="text-3xl font-bold" id="headerBusinessName">🍽️ Rumah Makan Klaten Manokwari</h1>
+                        <p class="text-orange-100 mt-1" id="headerBusinessAddress">Sistem Kasir Digital</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-lg font-semibold" id="currentTime"></div>
+                        <div class="text-orange-100">Kasir: <span id="headerCashierName">Admin</span></div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="max-w-7xl mx-auto px-4 py-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Menu Section -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800">📋 Daftar Menu</h2>
+                            <div class="flex space-x-2">
+                                <button onclick="openSettingsModal()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                                    ⚙️ Pengaturan
+                                </button>
+                                <button onclick="toggleEditMode()" id="editModeBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                                    ✏️ Edit Menu
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Menu Categories -->
+                        <div class="mb-4">
+                            <div class="flex space-x-2 border-b">
+                                <button onclick="showCategory('makanan')" class="category-btn px-4 py-2 font-medium border-b-2 border-orange-500 text-orange-600" data-category="makanan">
+                                    🍛 Makanan
+                                </button>
+                                <button onclick="showCategory('minuman')" class="category-btn px-4 py-2 font-medium text-gray-500 hover:text-orange-600" data-category="minuman">
+                                    🥤 Minuman
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Menu Items -->
+                        <div id="menuContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Menu items will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Section -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-xl shadow-lg p-6 sticky top-6">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6">🛒 Pesanan</h2>
+                        
+                        <div id="orderItems" class="space-y-3 mb-6 max-h-64 overflow-y-auto">
+                            <div class="text-center text-gray-500 py-8">
+                                Belum ada pesanan
+                            </div>
+                        </div>
+
+                        <div class="border-t pt-4">
+                            <div class="space-y-2 mb-4">
+                                <div class="flex justify-between items-center">
+                                    <span>Subtotal:</span>
+                                    <span id="subtotalAmount" class="text-gray-700">Rp 0</span>
+                                </div>
+                                <div class="flex justify-between items-center text-sm">
+                                    <span>Pajak Pemda (10%):</span>
+                                    <span id="taxAmount" class="text-gray-600">Rp 0</span>
+                                </div>
+                                <div class="flex justify-between items-center text-lg font-bold border-t pt-2">
+                                    <span>Total:</span>
+                                    <span id="totalAmount" class="text-orange-600">Rp 0</span>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                <button onclick="clearOrder()" class="w-full bg-gray-500 hover:bg-gray-600 text-white py-3 rounded-lg font-medium transition-colors">
+                                    🗑️ Hapus Semua
+                                </button>
+                                <button onclick="processPayment()" id="paymentBtn" class="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-medium transition-colors disabled:bg-gray-300" disabled>
+                                    💳 Bayar & Cetak Struk
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Settings Modal -->
+        <div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+            <div class="bg-white rounded-xl p-6 max-w-md w-full mx-4">
+                <h3 class="text-xl font-bold mb-4">⚙️ Pengaturan Sistem</h3>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label for="businessName" class="block text-sm font-medium text-gray-700 mb-1">Nama Usaha</label>
+                        <input type="text" id="businessName" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500" placeholder="Nama usaha">
+                    </div>
+                    <div>
+                        <label for="businessAddress" class="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
+                        <input type="text" id="businessAddress" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500" placeholder="Alamat usaha">
+                    </div>
+                    <div>
+                        <label for="businessPhone" class="block text-sm font-medium text-gray-700 mb-1">Telepon</label>
+                        <input type="text" id="businessPhone" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500" placeholder="Nomor telepon">
+                    </div>
+                    <div>
+                        <label for="cashierName" class="block text-sm font-medium text-gray-700 mb-1">Nama Kasir</label>
+                        <input type="text" id="cashierName" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500" placeholder="Nama operator kasir">
+                    </div>
+                </div>
+                
+                <div class="flex space-x-3 mt-6">
+                    <button onclick="closeSettingsModal()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 rounded-lg font-medium transition-colors">
+                        Batal
+                    </button>
+                    <button onclick="saveSettings()" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg font-medium transition-colors">
+                        💾 Simpan
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Modal -->
+        <div id="paymentModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+            <div class="bg-white rounded-xl p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+                <h3 class="text-xl font-bold mb-4">💳 Pembayaran & Preview Struk</h3>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Payment Form -->
+                    <div class="space-y-4">
+                        <div>
+                            <label for="totalPayment" class="block text-sm font-medium text-gray-700 mb-1">Total Bayar</label>
+                            <input type="text" id="totalPayment" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100" readonly>
+                        </div>
+                        <div>
+                            <label for="cashReceived" class="block text-sm font-medium text-gray-700 mb-1">Uang Diterima</label>
+                            <input type="number" id="cashReceived" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500" placeholder="Masukkan jumlah uang">
+                        </div>
+                        <div>
+                            <label for="changeAmount" class="block text-sm font-medium text-gray-700 mb-1">Kembalian</label>
+                            <input type="text" id="changeAmount" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100" readonly>
+                        </div>
+                        
+                        <!-- Date and Time Controls -->
+                        <div class="border-t pt-4">
+                            <h4 class="text-sm font-medium text-gray-700 mb-3">📅 Tanggal & Waktu Transaksi</h4>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label for="transactionDate" class="block text-xs font-medium text-gray-600 mb-1">Tanggal</label>
+                                    <input type="date" id="transactionDate" class="w-full px-2 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm">
+                                </div>
+                                <div>
+                                    <label for="transactionTime" class="block text-xs font-medium text-gray-600 mb-1">Waktu</label>
+                                    <input type="time" id="transactionTime" class="w-full px-2 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm">
+                                </div>
+                            </div>
+                            <button onclick="resetDateTime()" class="mt-2 text-xs text-blue-600 hover:text-blue-800 underline">
+                                🔄 Reset ke waktu sekarang
+                            </button>
+                        </div>
+                        
+                        <div class="space-y-3 mt-6">
+                            <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-sm font-medium">📶 Printer Bluetooth:</span>
+                                    <span id="printerStatus" class="text-sm text-gray-600">Tidak terhubung</span>
+                                </div>
+                                <button onclick="connectPrinter()" id="connectBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors">
+                                    Hubungkan
+                                </button>
+                            </div>
+                            
+                            <div class="flex space-x-3">
+                                <button onclick="closePaymentModal()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 rounded-lg font-medium transition-colors">
+                                    Batal
+                                </button>
+                                <button onclick="printReceipt()" id="printBtn" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg font-medium transition-colors disabled:bg-gray-300" disabled>
+                                    🖨️ Cetak Struk
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Receipt Preview -->
+                    <div class="bg-gray-100 p-4 rounded-lg">
+                        <h4 class="text-lg font-semibold mb-3 text-center">📄 Preview Struk</h4>
+                        <div class="bg-white rounded border-2 border-dashed border-gray-300 receipt-preview">
+                            <div class="text-center mb-1">
+                                <div class="font-bold text-center" id="previewBusinessName">RUMAH MAKAN KLATEN MANOKWARI</div>
+                                <div class="text-xs text-center" id="previewBusinessAddress">Jl. Contoh No. 123</div>
+                                <div class="text-xs text-center" id="previewBusinessPhone">Telp: (0986) 123456</div>
+                                <div class="border-b border-dashed my-1"></div>
+                            </div>
+                            
+                            <div class="text-xs mb-1">
+                                <div>No. Transaksi: <span id="previewTransactionId"></span></div>
+                                <div>Tanggal: <span id="previewDate"></span></div>
+                                <div>Waktu: <span id="previewTime"></span></div>
+                                <div>Kasir: <span id="previewCashier">Admin</span></div>
+                                <div class="border-b border-dashed my-1"></div>
+                            </div>
+
+                            <div id="previewItems" class="text-xs mb-1" style="line-height: 0.8;">
+                                <!-- Items will be populated -->
+                            </div>
+
+                            <div class="border-b border-dashed my-1"></div>
+                            <div class="text-xs">
+                                <div class="flex justify-between">
+                                    <span>Subtotal:</span>
+                                    <span id="previewSubtotal">Rp 0</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Pajak Pemda (10%):</span>
+                                    <span id="previewTax">Rp 0</span>
+                                </div>
+                                <div class="flex justify-between font-bold">
+                                    <span>TOTAL:</span>
+                                    <span id="previewTotal">Rp 0</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Bayar:</span>
+                                    <span id="previewPaid">Rp 0</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Kembali:</span>
+                                    <span id="previewChange">Rp 0</span>
+                                </div>
+                            </div>
+
+                            <div class="text-center text-xs mt-2">
+                                <div>Terima Kasih</div>
+                                <div>Selamat Menikmati!</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Receipt Template (Hidden) -->
+        <div id="receiptTemplate" class="hidden print-only receipt-paper">
+            <div class="text-center" style="margin-bottom: 1mm;">
+                <div style="font-weight: bold; font-size: 10px; text-align: center;" id="receiptBusinessName">RUMAH MAKAN KLATEN MANOKWARI</div>
+                <div style="font-size: 7px; text-align: center;" id="receiptBusinessAddress">Jl. Contoh No. 123</div>
+                <div style="font-size: 7px; text-align: center;" id="receiptBusinessPhone">Telp: (0986) 123456</div>
+                <div style="border-bottom: 1px dashed #000; margin: 1mm 0;"></div>
+            </div>
+            
+            <div style="font-size: 7px; margin-bottom: 1mm;">
+                <div>No. Transaksi: <span id="receiptTransactionId"></span></div>
+                <div>Tanggal: <span id="receiptDate"></span></div>
+                <div>Waktu: <span id="receiptTime"></span></div>
+                <div>Kasir: <span id="receiptCashier">Admin</span></div>
+                <div style="border-bottom: 1px dashed #000; margin: 1mm 0;"></div>
+            </div>
+
+            <div id="receiptItems" style="font-size: 7px; margin-bottom: 1mm; line-height: 0.8;">
+                <!-- Items will be populated -->
+            </div>
+
+            <div style="border-bottom: 1px dashed #000; margin: 1mm 0;"></div>
+            <div style="font-size: 7px;">
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Subtotal:</span>
+                    <span id="receiptSubtotal"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Pajak Pemda (10%):</span>
+                    <span id="receiptTax"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-weight: bold;">
+                    <span>TOTAL:</span>
+                    <span id="receiptTotal"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Bayar:</span>
+                    <span id="receiptPaid"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Kembali:</span>
+                    <span id="receiptChange"></span>
+                </div>
+            </div>
+
+            <div class="text-center" style="font-size: 7px; margin-top: 2mm;">
+                <div>Terima Kasih</div>
+                <div>Selamat Menikmati!</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data menu
+        let menuData = {
+            makanan: [
+                { id: 1, name: 'Nasi Gudeg Klaten', price: 15000, category: 'makanan' },
+                { id: 2, name: 'Ayam Goreng Kremes', price: 18000, category: 'makanan' },
+                { id: 3, name: 'Soto Ayam Klaten', price: 12000, category: 'makanan' },
+                { id: 4, name: 'Nasi Pecel', price: 10000, category: 'makanan' },
+                { id: 5, name: 'Bakso Malang', price: 13000, category: 'makanan' },
+                { id: 6, name: 'Mie Ayam Pangsit', price: 14000, category: 'makanan' }
+            ],
+            minuman: [
+                { id: 7, name: 'Es Teh Manis', price: 5000, category: 'minuman' },
+                { id: 8, name: 'Es Jeruk', price: 6000, category: 'minuman' },
+                { id: 9, name: 'Kopi Hitam', price: 4000, category: 'minuman' },
+                { id: 10, name: 'Jus Alpukat', price: 8000, category: 'minuman' },
+                { id: 11, name: 'Es Campur', price: 10000, category: 'minuman' },
+                { id: 12, name: 'Air Mineral', price: 3000, category: 'minuman' }
+            ]
+        };
+
+        let currentOrder = [];
+        let isEditMode = false;
+        let currentCategory = 'makanan';
+        let bluetoothDevice = null;
+        let bluetoothCharacteristic = null;
+        
+        // Business settings
+        let businessSettings = {
+            name: 'RUMAH MAKAN KLATEN MANOKWARI',
+            address: 'Jl. Contoh No. 123',
+            phone: '(0986) 123456',
+            cashier: 'Admin'
+        };
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            updateTime();
+            setInterval(updateTime, 1000);
+            showCategory('makanan');
+            loadSettings();
+        });
+        
+        function loadSettings() {
+            const saved = localStorage.getItem('businessSettings');
+            if (saved) {
+                businessSettings = JSON.parse(saved);
+                updateDisplayedSettings();
+            }
+        }
+        
+        function updateDisplayedSettings() {
+            // Update header with business info
+            document.getElementById('headerBusinessName').textContent = `🍽️ ${businessSettings.name}`;
+            document.getElementById('headerBusinessAddress').textContent = businessSettings.address;
+            document.getElementById('headerCashierName').textContent = businessSettings.cashier;
+        }
+        
+        function updateAllReceiptPreviews() {
+            // Update preview elements if they exist
+            const previewBusinessName = document.getElementById('previewBusinessName');
+            const previewBusinessAddress = document.getElementById('previewBusinessAddress');
+            const previewBusinessPhone = document.getElementById('previewBusinessPhone');
+            const previewCashier = document.getElementById('previewCashier');
+            
+            if (previewBusinessName) previewBusinessName.textContent = businessSettings.name;
+            if (previewBusinessAddress) previewBusinessAddress.textContent = businessSettings.address;
+            if (previewBusinessPhone) previewBusinessPhone.textContent = `Telp: ${businessSettings.phone}`;
+            if (previewCashier) previewCashier.textContent = businessSettings.cashier;
+        }
+        
+        function openSettingsModal() {
+            document.getElementById('businessName').value = businessSettings.name;
+            document.getElementById('businessAddress').value = businessSettings.address;
+            document.getElementById('businessPhone').value = businessSettings.phone;
+            document.getElementById('cashierName').value = businessSettings.cashier;
+            
+            document.getElementById('settingsModal').classList.remove('hidden');
+            document.getElementById('settingsModal').classList.add('flex');
+        }
+        
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').classList.add('hidden');
+            document.getElementById('settingsModal').classList.remove('flex');
+        }
+        
+        function saveSettings() {
+            const newName = document.getElementById('businessName').value.trim();
+            const newAddress = document.getElementById('businessAddress').value.trim();
+            const newPhone = document.getElementById('businessPhone').value.trim();
+            const newCashier = document.getElementById('cashierName').value.trim();
+            
+            // Update settings with new values or keep existing if empty
+            if (newName) businessSettings.name = newName;
+            if (newAddress) businessSettings.address = newAddress;
+            if (newPhone) businessSettings.phone = newPhone;
+            if (newCashier) businessSettings.cashier = newCashier;
+            
+            // Save to localStorage
+            localStorage.setItem('businessSettings', JSON.stringify(businessSettings));
+            
+            // Update all displayed settings immediately
+            updateDisplayedSettings();
+            updateAllReceiptPreviews();
+            
+            closeSettingsModal();
+            showNotification('Pengaturan berhasil disimpan!', 'success');
+        }
+        
+        function generateTransactionId() {
+            const now = new Date();
+            const dateStr = now.toISOString().slice(2, 10).replace(/-/g, ''); // YYMMDD (6 digits)
+            const timeStr = now.toTimeString().slice(0, 5).replace(/:/g, ''); // HHMM (4 digits)
+            const random = Math.floor(Math.random() * 10); // 1 digit
+            return `${dateStr}${timeStr}${random}`;
+        }
+
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('id-ID', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            document.getElementById('currentTime').textContent = timeString;
+        }
+
+        function showCategory(category) {
+            currentCategory = category;
+            
+            // Update active tab
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('border-orange-500', 'text-orange-600');
+                btn.classList.add('text-gray-500');
+            });
+            
+            const activeBtn = document.querySelector(`[data-category="${category}"]`);
+            activeBtn.classList.add('border-orange-500', 'text-orange-600');
+            activeBtn.classList.remove('text-gray-500');
+
+            renderMenu();
+        }
+
+        function renderMenu() {
+            const container = document.getElementById('menuContainer');
+            const items = menuData[currentCategory];
+            
+            container.innerHTML = items.map(item => `
+                <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="font-semibold text-gray-800">${item.name}</h3>
+                        ${isEditMode ? `
+                            <button onclick="editItem(${item.id})" class="text-blue-600 hover:text-blue-800 text-sm">
+                                ✏️
+                            </button>
+                        ` : ''}
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-lg font-bold text-orange-600" ${isEditMode ? `onclick="editPrice(${item.id})"` : ''} ${isEditMode ? 'class="cursor-pointer hover:bg-yellow-100 px-2 py-1 rounded"' : ''}>
+                            Rp ${item.price.toLocaleString('id-ID')}
+                        </span>
+                        ${!isEditMode ? `
+                            <button onclick="addToOrder(${item.id})" class="bg-orange-600 hover:bg-orange-700 text-white px-3 py-1 rounded-lg text-sm font-medium transition-colors">
+                                + Tambah
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleEditMode() {
+            isEditMode = !isEditMode;
+            const btn = document.getElementById('editModeBtn');
+            
+            if (isEditMode) {
+                btn.textContent = '✅ Selesai Edit';
+                btn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                btn.classList.add('bg-green-600', 'hover:bg-green-700');
+            } else {
+                btn.textContent = '✏️ Edit Menu';
+                btn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                btn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+            }
+            
+            renderMenu();
+        }
+
+        function editItem(id) {
+            const item = findItemById(id);
+            const newName = prompt('Edit nama menu:', item.name);
+            if (newName && newName.trim()) {
+                item.name = newName.trim();
+                renderMenu();
+            }
+        }
+
+        function editPrice(id) {
+            const item = findItemById(id);
+            const newPrice = prompt('Edit harga (tanpa Rp):', item.price);
+            if (newPrice && !isNaN(newPrice) && parseInt(newPrice) > 0) {
+                item.price = parseInt(newPrice);
+                renderMenu();
+            }
+        }
+
+        function findItemById(id) {
+            for (let category in menuData) {
+                const item = menuData[category].find(item => item.id === id);
+                if (item) return item;
+            }
+            return null;
+        }
+
+        function addToOrder(id) {
+            const item = findItemById(id);
+            const existingItem = currentOrder.find(orderItem => orderItem.id === id);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                currentOrder.push({
+                    ...item,
+                    quantity: 1
+                });
+            }
+            
+            renderOrder();
+        }
+
+        function removeFromOrder(id) {
+            currentOrder = currentOrder.filter(item => item.id !== id);
+            renderOrder();
+        }
+
+        function updateQuantity(id, change) {
+            const item = currentOrder.find(orderItem => orderItem.id === id);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    removeFromOrder(id);
+                } else {
+                    renderOrder();
+                }
+            }
+        }
+
+        function renderOrder() {
+            const container = document.getElementById('orderItems');
+            const paymentBtn = document.getElementById('paymentBtn');
+            
+            if (currentOrder.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-gray-500 py-8">
+                        Belum ada pesanan
+                    </div>
+                `;
+                paymentBtn.disabled = true;
+            } else {
+                container.innerHTML = currentOrder.map(item => `
+                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                        <div class="flex-1">
+                            <div class="font-medium text-sm">${item.name}</div>
+                            <div class="text-orange-600 font-semibold">Rp ${item.price.toLocaleString('id-ID')}</div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="updateQuantity(${item.id}, -1)" class="w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full text-xs font-bold">-</button>
+                            <span class="w-8 text-center font-semibold">${item.quantity}</span>
+                            <button onclick="updateQuantity(${item.id}, 1)" class="w-6 h-6 bg-green-500 hover:bg-green-600 text-white rounded-full text-xs font-bold">+</button>
+                        </div>
+                    </div>
+                `).join('');
+                paymentBtn.disabled = false;
+            }
+            
+            updateTotal();
+        }
+
+        function updateTotal() {
+            const subtotal = currentOrder.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const tax = Math.round(subtotal * 0.1);
+            const total = subtotal + tax;
+            
+            document.getElementById('subtotalAmount').textContent = `Rp ${subtotal.toLocaleString('id-ID')}`;
+            document.getElementById('taxAmount').textContent = `Rp ${tax.toLocaleString('id-ID')}`;
+            document.getElementById('totalAmount').textContent = `Rp ${total.toLocaleString('id-ID')}`;
+        }
+
+        function clearOrder() {
+            if (currentOrder.length > 0 && confirm('Hapus semua pesanan?')) {
+                currentOrder = [];
+                renderOrder();
+            }
+        }
+
+        function processPayment() {
+            const subtotal = currentOrder.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const tax = Math.round(subtotal * 0.1);
+            const total = subtotal + tax;
+            
+            document.getElementById('totalPayment').value = `Rp ${total.toLocaleString('id-ID')}`;
+            document.getElementById('cashReceived').value = '';
+            document.getElementById('changeAmount').value = '';
+            
+            // Set current date and time
+            setCurrentDateTime();
+            
+            // Update preview
+            updateReceiptPreview();
+            
+            document.getElementById('paymentModal').classList.remove('hidden');
+            document.getElementById('paymentModal').classList.add('flex');
+            document.getElementById('cashReceived').focus();
+        }
+        
+        function setCurrentDateTime() {
+            const now = new Date();
+            const dateStr = now.toISOString().split('T')[0]; // YYYY-MM-DD format
+            const timeStr = now.toTimeString().slice(0, 5); // HH:MM format
+            
+            document.getElementById('transactionDate').value = dateStr;
+            document.getElementById('transactionTime').value = timeStr;
+        }
+        
+        function resetDateTime() {
+            setCurrentDateTime();
+            updateReceiptPreview();
+        }
+
+        function closePaymentModal() {
+            document.getElementById('paymentModal').classList.add('hidden');
+            document.getElementById('paymentModal').classList.remove('flex');
+        }
+
+        function updateReceiptPreview() {
+            const subtotal = currentOrder.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const tax = Math.round(subtotal * 0.1);
+            const total = subtotal + tax;
+            const cashReceived = parseInt(document.getElementById('cashReceived').value) || 0;
+            const change = cashReceived - total;
+            
+            // Generate transaction ID
+            const transactionId = generateTransactionId();
+            
+            // Update business info in preview
+            document.getElementById('previewBusinessName').textContent = businessSettings.name;
+            document.getElementById('previewBusinessAddress').textContent = businessSettings.address;
+            document.getElementById('previewBusinessPhone').textContent = `Telp: ${businessSettings.phone}`;
+            
+            // Get custom date and time from inputs
+            const customDate = document.getElementById('transactionDate').value;
+            const customTime = document.getElementById('transactionTime').value;
+            
+            // Format date and time for display
+            let displayDate, displayTime;
+            if (customDate) {
+                const dateObj = new Date(customDate);
+                displayDate = dateObj.toLocaleDateString('id-ID');
+            } else {
+                displayDate = new Date().toLocaleDateString('id-ID');
+            }
+            
+            if (customTime) {
+                displayTime = customTime;
+            } else {
+                displayTime = new Date().toLocaleTimeString('id-ID');
+            }
+            
+            document.getElementById('previewTransactionId').textContent = transactionId;
+            document.getElementById('previewDate').textContent = displayDate;
+            document.getElementById('previewTime').textContent = displayTime;
+            document.getElementById('previewCashier').textContent = businessSettings.cashier;
+            
+            // Update items with tighter spacing
+            const itemsHtml = currentOrder.map(item => `
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1px;">
+                    <span>${item.name}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+                    <span>${item.quantity} x Rp ${item.price.toLocaleString('id-ID')}</span>
+                    <span>Rp ${(item.quantity * item.price).toLocaleString('id-ID')}</span>
+                </div>
+            `).join('');
+            
+            document.getElementById('previewItems').innerHTML = itemsHtml;
+            document.getElementById('previewSubtotal').textContent = `Rp ${subtotal.toLocaleString('id-ID')}`;
+            document.getElementById('previewTax').textContent = `Rp ${tax.toLocaleString('id-ID')}`;
+            document.getElementById('previewTotal').textContent = `Rp ${total.toLocaleString('id-ID')}`;
+            document.getElementById('previewPaid').textContent = `Rp ${cashReceived.toLocaleString('id-ID')}`;
+            document.getElementById('previewChange').textContent = change >= 0 ? `Rp ${change.toLocaleString('id-ID')}` : 'Rp 0';
+        }
+
+        // Calculate change when cash received changes
+        document.getElementById('cashReceived').addEventListener('input', function() {
+            const subtotal = currentOrder.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const tax = Math.round(subtotal * 0.1);
+            const total = subtotal + tax;
+            const cashReceived = parseInt(this.value) || 0;
+            const change = cashReceived - total;
+            const printBtn = document.getElementById('printBtn');
+            
+            if (change >= 0) {
+                document.getElementById('changeAmount').value = `Rp ${change.toLocaleString('id-ID')}`;
+                printBtn.disabled = false;
+            } else {
+                document.getElementById('changeAmount').value = 'Uang kurang';
+                printBtn.disabled = true;
+            }
+            
+            // Update preview in real-time
+            updateReceiptPreview();
+        });
+        
+        // Update preview when date or time changes
+        document.getElementById('transactionDate').addEventListener('change', updateReceiptPreview);
+        document.getElementById('transactionTime').addEventListener('change', updateReceiptPreview);
+
+        async function connectPrinter() {
+            try {
+                // Check if Web Bluetooth is supported
+                if (!navigator.bluetooth) {
+                    showNotification('Browser tidak mendukung Bluetooth. Gunakan Chrome/Edge terbaru dengan HTTPS.', 'error');
+                    return;
+                }
+
+                const connectBtn = document.getElementById('connectBtn');
+                const statusSpan = document.getElementById('printerStatus');
+                
+                connectBtn.textContent = 'Menghubungkan...';
+                connectBtn.disabled = true;
+                
+                // Request Bluetooth device with broader compatibility
+                bluetoothDevice = await navigator.bluetooth.requestDevice({
+                    acceptAllDevices: true,
+                    optionalServices: [
+                        '000018f0-0000-1000-8000-00805f9b34fb', // Generic printer service
+                        '0000ff00-0000-1000-8000-00805f9b34fb', // Common thermal printer service
+                        '49535343-fe7d-4ae5-8fa9-9fafd205e455', // Another common service
+                        'e7810a71-73ae-499d-8c15-faa9aef0c3f2'  // Alternative service
+                    ]
+                });
+                
+                // Connect to GATT server
+                const server = await bluetoothDevice.gatt.connect();
+                
+                // Try to find a suitable service and characteristic
+                const services = await server.getPrimaryServices();
+                let foundCharacteristic = false;
+                
+                for (const service of services) {
+                    try {
+                        const characteristics = await service.getCharacteristics();
+                        for (const characteristic of characteristics) {
+                            // Look for writable characteristics
+                            if (characteristic.properties.write || characteristic.properties.writeWithoutResponse) {
+                                bluetoothCharacteristic = characteristic;
+                                foundCharacteristic = true;
+                                break;
+                            }
+                        }
+                        if (foundCharacteristic) break;
+                    } catch (e) {
+                        // Continue to next service if this one fails
+                        continue;
+                    }
+                }
+                
+                if (!foundCharacteristic) {
+                    throw new Error('Tidak dapat menemukan karakteristik printer yang sesuai');
+                }
+                
+                statusSpan.textContent = `Terhubung: ${bluetoothDevice.name || 'Printer'}`;
+                statusSpan.className = 'text-sm text-green-600 font-medium';
+                connectBtn.textContent = 'Putuskan';
+                connectBtn.onclick = disconnectPrinter;
+                connectBtn.disabled = false;
+                
+                showNotification('Printer berhasil terhubung!', 'success');
+                
+                // Handle disconnection
+                bluetoothDevice.addEventListener('gattserverdisconnected', () => {
+                    statusSpan.textContent = 'Tidak terhubung';
+                    statusSpan.className = 'text-sm text-gray-600';
+                    connectBtn.textContent = 'Hubungkan';
+                    connectBtn.onclick = connectPrinter;
+                    bluetoothDevice = null;
+                    bluetoothCharacteristic = null;
+                    showNotification('Printer terputus', 'info');
+                });
+                
+            } catch (error) {
+                console.error('Bluetooth connection failed:', error);
+                document.getElementById('printerStatus').textContent = 'Gagal terhubung';
+                document.getElementById('printerStatus').className = 'text-sm text-red-600';
+                document.getElementById('connectBtn').textContent = 'Hubungkan';
+                document.getElementById('connectBtn').disabled = false;
+                
+                // Show specific error messages
+                if (error.name === 'NotFoundError') {
+                    showNotification('Tidak ada perangkat Bluetooth yang dipilih.', 'error');
+                } else if (error.name === 'SecurityError') {
+                    showNotification('Akses Bluetooth ditolak. Pastikan menggunakan HTTPS.', 'error');
+                } else if (error.name === 'NotSupportedError') {
+                    showNotification('Browser tidak mendukung Web Bluetooth API.', 'error');
+                } else {
+                    showNotification(`Gagal terhubung: ${error.message}`, 'error');
+                }
+            }
+        }
+        
+        function disconnectPrinter() {
+            if (bluetoothDevice && bluetoothDevice.gatt.connected) {
+                bluetoothDevice.gatt.disconnect();
+            }
+        }
+        
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${
+                type === 'error' ? 'bg-red-500 text-white' : 
+                type === 'success' ? 'bg-green-500 text-white' : 
+                'bg-blue-500 text-white'
+            }`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+        
+        async function printToBluetooth(receiptText) {
+            if (!bluetoothCharacteristic) {
+                throw new Error('Printer tidak terhubung');
+            }
+            
+            try {
+                // Simple text-based printing for better compatibility
+                const encoder = new TextEncoder();
+                
+                // Build complete receipt text with centered header
+                let fullReceipt = '';
+                
+                // Center the business name (assuming 32 char width)
+                const centerText = (text, width = 32) => {
+                    const padding = Math.max(0, Math.floor((width - text.length) / 2));
+                    return ' '.repeat(padding) + text;
+                };
+                
+                fullReceipt += centerText(businessSettings.name) + '\n';
+                fullReceipt += centerText(businessSettings.address) + '\n';
+                fullReceipt += centerText(`Telp: ${businessSettings.phone}`) + '\n';
+                fullReceipt += '--------------------------------\n';
+                fullReceipt += receiptText;
+                fullReceipt += '--------------------------------\n';
+                fullReceipt += '       Terima Kasih\n';
+                fullReceipt += '     Selamat Menikmati!\n\n\n\n';
+                
+                // Convert to bytes
+                const data = encoder.encode(fullReceipt);
+                
+                // Send data in chunks to avoid buffer overflow
+                const chunkSize = 20; // Small chunks for better compatibility
+                for (let i = 0; i < data.length; i += chunkSize) {
+                    const chunk = data.slice(i, i + chunkSize);
+                    
+                    if (bluetoothCharacteristic.properties.writeWithoutResponse) {
+                        await bluetoothCharacteristic.writeValueWithoutResponse(chunk);
+                    } else {
+                        await bluetoothCharacteristic.writeValue(chunk);
+                    }
+                    
+                    // Small delay between chunks
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+                
+            } catch (error) {
+                console.error('Print error:', error);
+                throw new Error(`Gagal mencetak: ${error.message}`);
+            }
+        }
+        
+        async function printReceipt() {
+            const subtotal = currentOrder.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const tax = Math.round(subtotal * 0.1);
+            const total = subtotal + tax;
+            const cashReceived = parseInt(document.getElementById('cashReceived').value) || 0;
+            const change = cashReceived - total;
+            const transactionId = generateTransactionId();
+            
+            // Get custom date and time
+            const customDate = document.getElementById('transactionDate').value;
+            const customTime = document.getElementById('transactionTime').value;
+            
+            let displayDate, displayTime;
+            if (customDate) {
+                const dateObj = new Date(customDate);
+                displayDate = dateObj.toLocaleDateString('id-ID');
+            } else {
+                displayDate = new Date().toLocaleDateString('id-ID');
+            }
+            
+            if (customTime) {
+                displayTime = customTime;
+            } else {
+                displayTime = new Date().toLocaleTimeString('id-ID');
+            }
+            
+            try {
+                // If Bluetooth printer is connected, use it
+                if (bluetoothCharacteristic) {
+                    
+                    // Build receipt text
+                    let receiptText = `No. Transaksi: ${transactionId}\n`;
+                    receiptText += `Tanggal: ${displayDate}\n`;
+                    receiptText += `Waktu: ${displayTime}\n`;
+                    receiptText += `Kasir: ${businessSettings.cashier}\n\n`;
+                    
+                    // Add items
+                    currentOrder.forEach(item => {
+                        receiptText += `${item.name}\n`;
+                        receiptText += `${item.quantity} x Rp ${item.price.toLocaleString('id-ID')} = Rp ${(item.quantity * item.price).toLocaleString('id-ID')}\n`;
+                    });
+                    
+                    receiptText += `\nSubtotal: Rp ${subtotal.toLocaleString('id-ID')}\n`;
+                    receiptText += `Pajak Pemda (10%): Rp ${tax.toLocaleString('id-ID')}\n`;
+                    receiptText += `TOTAL: Rp ${total.toLocaleString('id-ID')}\n`;
+                    receiptText += `Bayar: Rp ${cashReceived.toLocaleString('id-ID')}\n`;
+                    receiptText += `Kembali: Rp ${change.toLocaleString('id-ID')}\n\n`;
+                    
+                    await printToBluetooth(receiptText);
+                    showNotification('Struk berhasil dicetak via Bluetooth!', 'success');
+                } else {
+                    // Fallback to browser print
+                    
+                    // Update business info
+                    document.getElementById('receiptBusinessName').textContent = businessSettings.name;
+                    document.getElementById('receiptBusinessAddress').textContent = businessSettings.address;
+                    document.getElementById('receiptBusinessPhone').textContent = `Telp: ${businessSettings.phone}`;
+                    
+                    // Update transaction info
+                    document.getElementById('receiptTransactionId').textContent = transactionId;
+                    document.getElementById('receiptDate').textContent = displayDate;
+                    document.getElementById('receiptTime').textContent = displayTime;
+                    document.getElementById('receiptCashier').textContent = businessSettings.cashier;
+                    
+                    // Update totals
+                    document.getElementById('receiptSubtotal').textContent = `Rp ${subtotal.toLocaleString('id-ID')}`;
+                    document.getElementById('receiptTax').textContent = `Rp ${tax.toLocaleString('id-ID')}`;
+                    document.getElementById('receiptTotal').textContent = `Rp ${total.toLocaleString('id-ID')}`;
+                    document.getElementById('receiptPaid').textContent = `Rp ${cashReceived.toLocaleString('id-ID')}`;
+                    document.getElementById('receiptChange').textContent = `Rp ${change.toLocaleString('id-ID')}`;
+                    
+                    // Populate items with tighter spacing
+                    const itemsHtml = currentOrder.map(item => `
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 1px;">
+                            <span>${item.name}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 1px;">
+                            <span>${item.quantity} x Rp ${item.price.toLocaleString('id-ID')}</span>
+                            <span>Rp ${(item.quantity * item.price).toLocaleString('id-ID')}</span>
+                        </div>
+                    `).join('');
+                    
+                    document.getElementById('receiptItems').innerHTML = itemsHtml;
+                    
+                    // Show receipt and print
+                    document.getElementById('receiptTemplate').classList.remove('hidden');
+                    window.print();
+                    
+                    setTimeout(() => {
+                        document.getElementById('receiptTemplate').classList.add('hidden');
+                    }, 1000);
+                    
+                    showNotification('Struk dicetak via browser. Hubungkan printer Bluetooth untuk cetak langsung.', 'info');
+                }
+                
+                // Clean up after printing
+                closePaymentModal();
+                currentOrder = [];
+                renderOrder();
+                
+            } catch (error) {
+                console.error('Print failed:', error);
+                showNotification('Gagal mencetak struk. Coba hubungkan ulang printer.', 'error');
+            }
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9919f481967aea76',t:'MTc2MDk3ODQwNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
