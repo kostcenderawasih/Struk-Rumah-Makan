@@ -69,24 +69,46 @@
                         <div class="flex justify-between items-center mb-6">
                             <h2 class="text-2xl font-bold text-gray-800">📋 Daftar Menu</h2>
                             <div class="flex space-x-2">
-                                <button onclick="openSettingsModal()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
-                                    ⚙️ Pengaturan
-                                </button>
                                 <button onclick="toggleEditMode()" id="editModeBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
                                     ✏️ Edit Menu
                                 </button>
+                                <div class="relative">
+                                    <button onclick="toggleNavigationMenu()" id="navMenuBtn" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center">
+                                        ☰ Menu
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    </button>
+                                    <div id="navigationMenu" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
+                                        <div class="py-2">
+                                            <button onclick="openSettingsModal(); closeNavigationMenu()" class="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 flex items-center">
+                                                ⚙️ Pengaturan Usaha
+                                            </button>
+                                            <button onclick="openFooterModal(); closeNavigationMenu()" class="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 flex items-center">
+                                                📝 Edit Footer Struk
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
                         <!-- Menu Categories -->
                         <div class="mb-4">
-                            <div class="flex space-x-2 border-b">
-                                <button onclick="showCategory('makanan')" class="category-btn px-4 py-2 font-medium border-b-2 border-orange-500 text-orange-600" data-category="makanan">
-                                    🍛 Makanan
-                                </button>
-                                <button onclick="showCategory('minuman')" class="category-btn px-4 py-2 font-medium text-gray-500 hover:text-orange-600" data-category="minuman">
-                                    🥤 Minuman
-                                </button>
+                            <div class="flex justify-between items-center border-b">
+                                <div class="flex space-x-2">
+                                    <button onclick="showCategory('makanan')" class="category-btn px-4 py-2 font-medium border-b-2 border-orange-500 text-orange-600" data-category="makanan">
+                                        🍛 Makanan
+                                    </button>
+                                    <button onclick="showCategory('minuman')" class="category-btn px-4 py-2 font-medium text-gray-500 hover:text-orange-600" data-category="minuman">
+                                        🥤 Minuman
+                                    </button>
+                                </div>
+                                <div id="editModeActions" class="hidden space-x-2">
+                                    <button onclick="openAddMenuModal()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg text-sm font-medium transition-colors">
+                                        ➕ Tambah Menu
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
@@ -138,10 +160,44 @@
             </div>
         </main>
 
+        <!-- Add/Edit Menu Modal -->
+        <div id="addMenuModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+            <div class="bg-white rounded-xl p-6 max-w-md w-full mx-4">
+                <h3 class="text-xl font-bold mb-4" id="menuModalTitle">➕ Tambah Menu Baru</h3>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label for="menuName" class="block text-sm font-medium text-gray-700 mb-1">Nama Menu</label>
+                        <input type="text" id="menuName" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="Masukkan nama menu">
+                    </div>
+                    <div>
+                        <label for="menuPrice" class="block text-sm font-medium text-gray-700 mb-1">Harga (Rp)</label>
+                        <input type="number" id="menuPrice" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="Masukkan harga" min="0">
+                    </div>
+                    <div>
+                        <label for="menuCategory" class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
+                        <select id="menuCategory" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            <option value="makanan">🍛 Makanan</option>
+                            <option value="minuman">🥤 Minuman</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="flex space-x-3 mt-6">
+                    <button onclick="closeAddMenuModal()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 rounded-lg font-medium transition-colors">
+                        Batal
+                    </button>
+                    <button onclick="saveMenu()" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg font-medium transition-colors">
+                        💾 Simpan
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- Settings Modal -->
         <div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
             <div class="bg-white rounded-xl p-6 max-w-md w-full mx-4">
-                <h3 class="text-xl font-bold mb-4">⚙️ Pengaturan Sistem</h3>
+                <h3 class="text-xl font-bold mb-4">⚙️ Pengaturan Usaha</h3>
                 
                 <div class="space-y-4">
                     <div>
@@ -167,6 +223,58 @@
                         Batal
                     </button>
                     <button onclick="saveSettings()" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg font-medium transition-colors">
+                        💾 Simpan
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Settings Modal -->
+        <div id="footerModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+            <div class="bg-white rounded-xl p-6 max-w-lg w-full mx-4">
+                <h3 class="text-xl font-bold mb-4">📝 Edit Footer Struk</h3>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label for="footerLine1" class="block text-sm font-medium text-gray-700 mb-1">Baris 1</label>
+                        <input type="text" id="footerLine1" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="Contoh: Terima Kasih">
+                    </div>
+                    <div>
+                        <label for="footerLine2" class="block text-sm font-medium text-gray-700 mb-1">Baris 2</label>
+                        <input type="text" id="footerLine2" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="Contoh: Selamat Menikmati!">
+                    </div>
+                    <div>
+                        <label for="footerLine3" class="block text-sm font-medium text-gray-700 mb-1">Baris 3 (Opsional)</label>
+                        <input type="text" id="footerLine3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="Contoh: Sampai jumpa lagi">
+                    </div>
+                    
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h4 class="text-sm font-medium text-gray-700 mb-2">👀 Preview Footer:</h4>
+                        <div class="bg-white border rounded p-3 text-center text-sm font-mono">
+                            <div id="footerPreviewLine1">Terima Kasih</div>
+                            <div id="footerPreviewLine2">Selamat Menikmati!</div>
+                            <div id="footerPreviewLine3" class="hidden"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-xs text-gray-600">
+                        <p><strong>💡 Tips:</strong></p>
+                        <ul class="list-disc list-inside space-y-1">
+                            <li>Gunakan teks singkat untuk hasil terbaik</li>
+                            <li>Baris 3 bersifat opsional, kosongkan jika tidak diperlukan</li>
+                            <li>Footer akan muncul di semua desain struk</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="flex space-x-3 mt-6">
+                    <button onclick="resetFooterToDefault()" class="bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-lg font-medium transition-colors">
+                        🔄 Reset Default
+                    </button>
+                    <button onclick="closeFooterModal()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 rounded-lg font-medium transition-colors">
+                        Batal
+                    </button>
+                    <button onclick="saveFooterSettings()" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg font-medium transition-colors">
                         💾 Simpan
                     </button>
                 </div>
@@ -213,6 +321,16 @@
                         </div>
                         
                         <div class="space-y-3 mt-6">
+                            <div class="flex items-center justify-between p-3 bg-purple-50 rounded-lg mb-3">
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-sm font-medium">🎨 Desain Struk:</span>
+                                    <span id="currentDesign" class="text-sm text-purple-600 font-medium">Klasik</span>
+                                </div>
+                                <button onclick="openReceiptDesignModal()" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors">
+                                    Pilih Desain
+                                </button>
+                            </div>
+                            
                             <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
                                 <div class="flex items-center space-x-2">
                                     <span class="text-sm font-medium">📶 Printer Bluetooth:</span>
@@ -291,7 +409,345 @@
             </div>
         </div>
 
-        <!-- Receipt Template (Hidden) -->
+        <!-- Receipt Design Selection Modal -->
+        <div id="receiptDesignModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+            <div class="bg-white rounded-xl p-6 max-w-5xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+                <h3 class="text-xl font-bold mb-4">🎨 Pilih Desain Struk</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Design 1: Classic -->
+                    <div class="border-2 border-gray-300 rounded-lg p-3 hover:border-blue-500 cursor-pointer" onclick="selectReceiptDesign('classic')">
+                        <h4 class="font-bold text-center mb-2 text-blue-600">📄 Klasik</h4>
+                        <div class="bg-white border rounded receipt-preview text-xs">
+                            <div class="text-center font-bold">RUMAH MAKAN KLATEN</div>
+                            <div class="text-center text-xs">Jl. Contoh No. 123</div>
+                            <div class="border-b border-dashed my-1"></div>
+                            <div>No: 240101001</div>
+                            <div>Tanggal: 01/01/2024</div>
+                            <div class="border-b border-dashed my-1"></div>
+                            <div>Nasi Gudeg</div>
+                            <div class="flex justify-between">
+                                <span>1 x Rp 15.000</span>
+                                <span>Rp 15.000</span>
+                            </div>
+                            <div class="border-b border-dashed my-1"></div>
+                            <div class="flex justify-between font-bold">
+                                <span>TOTAL:</span>
+                                <span>Rp 16.500</span>
+                            </div>
+                            <div class="text-center mt-1">Terima Kasih</div>
+                        </div>
+                        <div class="text-center mt-1">
+                            <span class="text-xs text-gray-600">Sederhana dan bersih</span>
+                        </div>
+                    </div>
+
+                    <!-- Design 2: Modern -->
+                    <div class="border-2 border-gray-300 rounded-lg p-3 hover:border-green-500 cursor-pointer" onclick="selectReceiptDesign('modern')">
+                        <h4 class="font-bold text-center mb-2 text-green-600">✨ Modern</h4>
+                        <div class="bg-white border rounded receipt-preview text-xs">
+                            <div class="text-center font-bold bg-gray-100 p-1">🍽️ RUMAH MAKAN KLATEN</div>
+                            <div class="text-center text-xs">📍 Jl. Contoh No. 123</div>
+                            <div class="border-b-2 border-gray-400 my-1"></div>
+                            <div class="flex justify-between">
+                                <span>📋 No:</span>
+                                <span>240101001</span>
+                            </div>
+                            <div class="border-b-2 border-gray-400 my-1"></div>
+                            <div class="bg-gray-50 p-1">
+                                <div>🍛 Nasi Gudeg</div>
+                                <div class="flex justify-between">
+                                    <span>1 x Rp 15.000</span>
+                                    <span>Rp 15.000</span>
+                                </div>
+                            </div>
+                            <div class="border-b-2 border-gray-400 my-1"></div>
+                            <div class="flex justify-between font-bold bg-gray-100 p-1">
+                                <span>💰 TOTAL:</span>
+                                <span>Rp 16.500</span>
+                            </div>
+                            <div class="text-center mt-1">🙏 Terima Kasih</div>
+                        </div>
+                        <div class="text-center mt-1">
+                            <span class="text-xs text-gray-600">Emoji dan highlight</span>
+                        </div>
+                    </div>
+
+                    <!-- Design 3: Elegant -->
+                    <div class="border-2 border-gray-300 rounded-lg p-3 hover:border-purple-500 cursor-pointer" onclick="selectReceiptDesign('elegant')">
+                        <h4 class="font-bold text-center mb-2 text-purple-600">👑 Elegan</h4>
+                        <div class="bg-white border rounded receipt-preview text-xs">
+                            <div class="text-center">
+                                <div class="font-bold">═══════════════════</div>
+                                <div class="font-bold">RUMAH MAKAN KLATEN</div>
+                                <div class="font-bold">═══════════════════</div>
+                            </div>
+                            <div class="text-center text-xs">Jl. Contoh No. 123</div>
+                            <div class="text-center">─────────────────────</div>
+                            <div class="text-center">
+                                <div>Transaksi: 240101001</div>
+                                <div>01/01/2024 - 12:00</div>
+                            </div>
+                            <div class="text-center">─────────────────────</div>
+                            <div>Nasi Gudeg Klaten</div>
+                            <div class="flex justify-between">
+                                <span>1 x 15.000</span>
+                                <span>15.000</span>
+                            </div>
+                            <div class="text-center">═══════════════════</div>
+                            <div class="flex justify-between font-bold">
+                                <span>TOTAL BAYAR</span>
+                                <span>16.500</span>
+                            </div>
+                            <div class="text-center mt-1">~ Terima Kasih ~</div>
+                        </div>
+                        <div class="text-center mt-1">
+                            <span class="text-xs text-gray-600">Border dekoratif</span>
+                        </div>
+                    </div>
+
+                    <!-- Design 4: Minimalis -->
+                    <div class="border-2 border-gray-300 rounded-lg p-3 hover:border-indigo-500 cursor-pointer" onclick="selectReceiptDesign('minimalist')">
+                        <h4 class="font-bold text-center mb-2 text-indigo-600">⚪ Minimalis</h4>
+                        <div class="bg-white border rounded receipt-preview text-xs">
+                            <div class="text-center font-bold text-lg">RM KLATEN</div>
+                            <div class="text-center text-xs mb-2">Jl. Contoh No. 123</div>
+                            <div class="mb-1">
+                                <div class="flex justify-between">
+                                    <span>240101001</span>
+                                    <span>01/01/24</span>
+                                </div>
+                            </div>
+                            <div class="border-t border-gray-300 pt-1 mb-1">
+                                <div class="flex justify-between">
+                                    <span>Nasi Gudeg</span>
+                                    <span>15.000</span>
+                                </div>
+                                <div class="text-xs text-gray-500">1x</div>
+                            </div>
+                            <div class="border-t border-gray-300 pt-1">
+                                <div class="flex justify-between font-bold">
+                                    <span>TOTAL</span>
+                                    <span>16.500</span>
+                                </div>
+                            </div>
+                            <div class="text-center mt-1 text-xs">Thank you</div>
+                        </div>
+                        <div class="text-center mt-1">
+                            <span class="text-xs text-gray-600">Desain simpel</span>
+                        </div>
+                    </div>
+
+                    <!-- Design 5: Colorful -->
+                    <div class="border-2 border-gray-300 rounded-lg p-3 hover:border-pink-500 cursor-pointer" onclick="selectReceiptDesign('colorful')">
+                        <h4 class="font-bold text-center mb-2 text-pink-600">🌈 Berwarna</h4>
+                        <div class="bg-white border rounded receipt-preview text-xs">
+                            <div class="text-center font-bold bg-gradient-to-r from-pink-200 to-purple-200 p-1">
+                                ★ RUMAH MAKAN KLATEN ★
+                            </div>
+                            <div class="text-center text-xs bg-blue-100 p-1">📍 Jl. Contoh No. 123</div>
+                            <div class="bg-yellow-100 p-1 my-1">
+                                <div class="flex justify-between">
+                                    <span>🎫 No: 240101001</span>
+                                    <span>📅 01/01/24</span>
+                                </div>
+                            </div>
+                            <div class="bg-green-100 p-1 mb-1">
+                                <div>🍛 Nasi Gudeg</div>
+                                <div class="flex justify-between">
+                                    <span>1 porsi</span>
+                                    <span>Rp 15.000</span>
+                                </div>
+                            </div>
+                            <div class="bg-red-100 p-1 font-bold">
+                                <div class="flex justify-between">
+                                    <span>💰 TOTAL:</span>
+                                    <span>Rp 16.500</span>
+                                </div>
+                            </div>
+                            <div class="text-center mt-1 bg-purple-100 p-1">✨ Terima Kasih ✨</div>
+                        </div>
+                        <div class="text-center mt-1">
+                            <span class="text-xs text-gray-600">Penuh warna</span>
+                        </div>
+                    </div>
+
+                    <!-- Design 6: Retro -->
+                    <div class="border-2 border-gray-300 rounded-lg p-3 hover:border-yellow-500 cursor-pointer" onclick="selectReceiptDesign('retro')">
+                        <h4 class="font-bold text-center mb-2 text-yellow-600">📻 Retro</h4>
+                        <div class="bg-white border rounded receipt-preview text-xs">
+                            <div class="text-center">
+                                <div class="font-bold">▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓</div>
+                                <div class="font-bold">▓ RUMAH MAKAN KLATEN ▓</div>
+                                <div class="font-bold">▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓</div>
+                            </div>
+                            <div class="text-center text-xs">░ Jl. Contoh No. 123 ░</div>
+                            <div class="text-center">▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒</div>
+                            <div class="text-center">
+                                <div>► TRX: 240101001 ◄</div>
+                                <div>► 01/01/2024 ◄</div>
+                            </div>
+                            <div class="text-center">▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒</div>
+                            <div>► Nasi Gudeg Klaten</div>
+                            <div class="flex justify-between">
+                                <span>  1 x 15.000</span>
+                                <span>15.000 ◄</span>
+                            </div>
+                            <div class="text-center">▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓</div>
+                            <div class="flex justify-between font-bold">
+                                <span>► TOTAL</span>
+                                <span>16.500 ◄</span>
+                            </div>
+                            <div class="text-center mt-1">░░ THANK YOU ░░</div>
+                        </div>
+                        <div class="text-center mt-1">
+                            <span class="text-xs text-gray-600">Gaya jadul</span>
+                        </div>
+                    </div>
+
+                    <!-- Design 7: Professional -->
+                    <div class="border-2 border-gray-300 rounded-lg p-3 hover:border-gray-600 cursor-pointer" onclick="selectReceiptDesign('professional')">
+                        <h4 class="font-bold text-center mb-2 text-gray-600">💼 Profesional</h4>
+                        <div class="bg-white border rounded receipt-preview text-xs">
+                            <div class="text-center border-b-2 border-black pb-1 mb-1">
+                                <div class="font-bold text-sm">RUMAH MAKAN KLATEN</div>
+                                <div class="text-xs">MANOKWARI</div>
+                                <div class="text-xs">Jl. Contoh No. 123</div>
+                                <div class="text-xs">Telp: (0986) 123456</div>
+                            </div>
+                            <div class="mb-1">
+                                <div class="flex justify-between">
+                                    <span>Receipt No.</span>
+                                    <span>240101001</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Date/Time</span>
+                                    <span>01/01/24 12:00</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Cashier</span>
+                                    <span>Admin</span>
+                                </div>
+                            </div>
+                            <div class="border-t border-b border-black py-1 mb-1">
+                                <div class="flex justify-between font-bold">
+                                    <span>ITEM</span>
+                                    <span>AMOUNT</span>
+                                </div>
+                                <div>Nasi Gudeg Klaten</div>
+                                <div class="flex justify-between">
+                                    <span>1 x Rp 15,000</span>
+                                    <span>Rp 15,000</span>
+                                </div>
+                            </div>
+                            <div class="border-b-2 border-black pb-1">
+                                <div class="flex justify-between">
+                                    <span>Subtotal:</span>
+                                    <span>Rp 15,000</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Tax (10%):</span>
+                                    <span>Rp 1,500</span>
+                                </div>
+                                <div class="flex justify-between font-bold">
+                                    <span>TOTAL:</span>
+                                    <span>Rp 16,500</span>
+                                </div>
+                            </div>
+                            <div class="text-center mt-1 text-xs">Thank you for your visit</div>
+                        </div>
+                        <div class="text-center mt-1">
+                            <span class="text-xs text-gray-600">Formal dan rapi</span>
+                        </div>
+                    </div>
+
+                    <!-- Design 8: Cute -->
+                    <div class="border-2 border-gray-300 rounded-lg p-3 hover:border-pink-400 cursor-pointer" onclick="selectReceiptDesign('cute')">
+                        <h4 class="font-bold text-center mb-2 text-pink-500">🎀 Imut</h4>
+                        <div class="bg-white border rounded receipt-preview text-xs">
+                            <div class="text-center">
+                                <div class="font-bold">♡♡♡♡♡♡♡♡♡♡♡♡♡♡♡♡♡</div>
+                                <div class="font-bold">♡ RUMAH MAKAN KLATEN ♡</div>
+                                <div class="font-bold">♡♡♡♡♡♡♡♡♡♡♡♡♡♡♡♡♡</div>
+                            </div>
+                            <div class="text-center text-xs">🏠 Jl. Contoh No. 123 🏠</div>
+                            <div class="text-center text-xs">☎️ (0986) 123456 ☎️</div>
+                            <div class="text-center">◦•●◉✿◉●•◦•●◉✿◉●•◦</div>
+                            <div class="text-center">
+                                <div>🎫 No: 240101001</div>
+                                <div>📅 01/01/2024 ⏰ 12:00</div>
+                                <div>👤 Kasir: Admin</div>
+                            </div>
+                            <div class="text-center">◦•●◉✿◉●•◦•●◉✿◉●•◦</div>
+                            <div class="text-center bg-pink-50 p-1">
+                                <div>🍛 Nasi Gudeg Klaten 🍛</div>
+                                <div class="flex justify-between">
+                                    <span>1 porsi x Rp 15.000</span>
+                                    <span>Rp 15.000</span>
+                                </div>
+                            </div>
+                            <div class="text-center">♡♡♡♡♡♡♡♡♡♡♡♡♡♡♡♡♡</div>
+                            <div class="flex justify-between font-bold">
+                                <span>💖 TOTAL:</span>
+                                <span>Rp 16.500 💖</span>
+                            </div>
+                            <div class="text-center mt-1">✨ Terima Kasih Sayang ✨</div>
+                            <div class="text-center">🌸 Sampai Jumpa Lagi 🌸</div>
+                        </div>
+                        <div class="text-center mt-1">
+                            <span class="text-xs text-gray-600">Lucu dan menggemaskan</span>
+                        </div>
+                    </div>
+
+                    <!-- Design 9: Tech -->
+                    <div class="border-2 border-gray-300 rounded-lg p-3 hover:border-cyan-500 cursor-pointer" onclick="selectReceiptDesign('tech')">
+                        <h4 class="font-bold text-center mb-2 text-cyan-600">💻 Tech</h4>
+                        <div class="bg-white border rounded receipt-preview text-xs bg-black text-green-400 p-1">
+                            <div class="text-center font-bold">
+                                <div>╔══════════════════════╗</div>
+                                <div>║ RUMAH MAKAN KLATEN   ║</div>
+                                <div>║ DIGITAL RECEIPT v2.1 ║</div>
+                                <div>╚══════════════════════╝</div>
+                            </div>
+                            <div class="text-center text-xs">
+                                <div>IP: 192.168.1.100</div>
+                                <div>LOC: Jl. Contoh No. 123</div>
+                            </div>
+                            <div class="text-center">┌────────────────────────┐</div>
+                            <div>
+                                <div>│ TXN_ID: 240101001      │</div>
+                                <div>│ TIMESTAMP: 01/01/24    │</div>
+                                <div>│ USER: admin            │</div>
+                            </div>
+                            <div class="text-center">├────────────────────────┤</div>
+                            <div>
+                                <div>│ ITEM: Nasi_Gudeg       │</div>
+                                <div>│ QTY: 1 PRICE: 15000    │</div>
+                                <div>│ SUBTOTAL: 15000        │</div>
+                            </div>
+                            <div class="text-center">├────────────────────────┤</div>
+                            <div class="font-bold">
+                                <div>│ TOTAL_AMOUNT: 16500    │</div>
+                            </div>
+                            <div class="text-center">└────────────────────────┘</div>
+                            <div class="text-center mt-1">>>> TRANSACTION_COMPLETE <<<</div>
+                        </div>
+                        <div class="text-center mt-1">
+                            <span class="text-xs text-gray-600">Gaya programmer</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-center mt-6">
+                    <button onclick="closeReceiptDesignModal()" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg font-medium transition-colors">
+                        Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Receipt Templates (Hidden) -->
+        <!-- Classic Design -->
         <div id="receiptTemplate" class="hidden print-only receipt-paper">
             <div class="text-center" style="margin-bottom: 1mm; line-height: 0.9;">
                 <div style="font-weight: bold; font-size: 10px; text-align: center;" id="receiptBusinessName">RUMAH MAKAN KLATEN MANOKWARI</div>
@@ -336,9 +792,431 @@
                 </div>
             </div>
 
-            <div style="font-size: 7px; margin-top: 1mm; text-align: center; line-height: 0.9;">
+            <div id="receiptFooter" style="font-size: 7px; margin-top: 1mm; text-align: center; line-height: 0.9;">
                 <div>Terima Kasih</div>
                 <div>Selamat Menikmati!</div>
+            </div>
+        </div>
+
+        <!-- Modern Design -->
+        <div id="receiptTemplateModern" class="hidden print-only receipt-paper">
+            <div class="text-center" style="margin-bottom: 1mm; line-height: 0.9; background: #f0f0f0; padding: 1mm;">
+                <div style="font-weight: bold; font-size: 10px; text-align: center;" id="receiptBusinessNameModern">🍽️ RUMAH MAKAN KLATEN MANOKWARI</div>
+                <div style="font-size: 7px; text-align: center;" id="receiptBusinessAddressModern">📍 Jl. Contoh No. 123</div>
+                <div style="font-size: 7px; text-align: center;" id="receiptBusinessPhoneModern">📞 Telp: (0986) 123456</div>
+                <div style="border-bottom: 2px solid #000; margin: 1mm 0;"></div>
+            </div>
+            
+            <div style="font-size: 7px; margin-bottom: 1mm;">
+                <div style="display: flex; justify-content: space-between;">
+                    <span>📋 No. Transaksi:</span>
+                    <span id="receiptTransactionIdModern"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>📅 Tanggal:</span>
+                    <span id="receiptDateModern"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>⏰ Waktu:</span>
+                    <span id="receiptTimeModern"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>👤 Kasir:</span>
+                    <span id="receiptCashierModern">Admin</span>
+                </div>
+                <div style="border-bottom: 2px solid #000; margin: 1mm 0;"></div>
+            </div>
+
+            <div id="receiptItemsModern" style="font-size: 7px; margin-bottom: 1mm; line-height: 0.8;">
+                <!-- Items will be populated -->
+            </div>
+
+            <div style="border-bottom: 2px solid #000; margin: 1mm 0;"></div>
+            <div style="font-size: 7px;">
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Subtotal:</span>
+                    <span id="receiptSubtotalModern"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Pajak Pemda (10%):</span>
+                    <span id="receiptTaxModern"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-weight: bold; background: #f0f0f0; padding: 1mm;">
+                    <span>💰 TOTAL:</span>
+                    <span id="receiptTotalModern"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Bayar:</span>
+                    <span id="receiptPaidModern"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Kembali:</span>
+                    <span id="receiptChangeModern"></span>
+                </div>
+            </div>
+
+            <div id="receiptFooterModern" style="font-size: 7px; margin-top: 1mm; text-align: center; line-height: 0.9;">
+                <div>🙏 Terima Kasih</div>
+                <div>😊 Selamat Menikmati!</div>
+            </div>
+        </div>
+
+        <!-- Elegant Design -->
+        <div id="receiptTemplateElegant" class="hidden print-only receipt-paper">
+            <div class="text-center" style="margin-bottom: 1mm; line-height: 0.9;">
+                <div style="font-size: 8px; text-align: center;">═══════════════════════════</div>
+                <div style="font-weight: bold; font-size: 10px; text-align: center;" id="receiptBusinessNameElegant">RUMAH MAKAN KLATEN MANOKWARI</div>
+                <div style="font-size: 8px; text-align: center;">═══════════════════════════</div>
+                <div style="font-size: 7px; text-align: center;" id="receiptBusinessAddressElegant">Jl. Contoh No. 123</div>
+                <div style="font-size: 7px; text-align: center;" id="receiptBusinessPhoneElegant">Telp: (0986) 123456</div>
+                <div style="font-size: 8px; text-align: center;">───────────────────────────</div>
+            </div>
+            
+            <div style="font-size: 7px; margin-bottom: 1mm; text-align: center;">
+                <div>Transaksi: <span id="receiptTransactionIdElegant"></span></div>
+                <div><span id="receiptDateElegant"></span> - <span id="receiptTimeElegant"></span></div>
+                <div>Kasir: <span id="receiptCashierElegant">Admin</span></div>
+                <div style="font-size: 8px;">───────────────────────────</div>
+            </div>
+
+            <div id="receiptItemsElegant" style="font-size: 7px; margin-bottom: 1mm; line-height: 0.8;">
+                <!-- Items will be populated -->
+            </div>
+
+            <div style="font-size: 8px; text-align: center;">═══════════════════════════</div>
+            <div style="font-size: 7px;">
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Subtotal:</span>
+                    <span id="receiptSubtotalElegant"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Pajak Pemda (10%):</span>
+                    <span id="receiptTaxElegant"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-weight: bold;">
+                    <span>TOTAL BAYAR:</span>
+                    <span id="receiptTotalElegant"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Bayar:</span>
+                    <span id="receiptPaidElegant"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Kembali:</span>
+                    <span id="receiptChangeElegant"></span>
+                </div>
+            </div>
+            <div style="font-size: 8px; text-align: center;">═══════════════════════════</div>
+
+            <div id="receiptFooterElegant" style="font-size: 7px; margin-top: 1mm; text-align: center; line-height: 0.9;">
+                <div>~ Terima Kasih ~</div>
+                <div>~ Selamat Menikmati ~</div>
+            </div>
+        </div>
+
+        <!-- Minimalist Design -->
+        <div id="receiptTemplateMinimalist" class="hidden print-only receipt-paper">
+            <div class="text-center" style="margin-bottom: 2mm; line-height: 0.9;">
+                <div style="font-weight: bold; font-size: 12px; text-align: center;" id="receiptBusinessNameMinimalist">RM KLATEN</div>
+                <div style="font-size: 7px; text-align: center;" id="receiptBusinessAddressMinimalist">Jl. Contoh No. 123</div>
+            </div>
+            
+            <div style="font-size: 7px; margin-bottom: 1mm;">
+                <div style="display: flex; justify-content: space-between;">
+                    <span id="receiptTransactionIdMinimalist"></span>
+                    <span id="receiptDateMinimalist"></span>
+                </div>
+                <div style="font-size: 6px;">Kasir: <span id="receiptCashierMinimalist">Admin</span></div>
+            </div>
+
+            <div style="border-top: 1px solid #000; padding-top: 1mm; margin-bottom: 1mm;">
+                <div id="receiptItemsMinimalist" style="font-size: 7px; line-height: 0.8;">
+                    <!-- Items will be populated -->
+                </div>
+            </div>
+
+            <div style="border-top: 1px solid #000; padding-top: 1mm; font-size: 7px;">
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Subtotal:</span>
+                    <span id="receiptSubtotalMinimalist"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Tax:</span>
+                    <span id="receiptTaxMinimalist"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-weight: bold;">
+                    <span>TOTAL:</span>
+                    <span id="receiptTotalMinimalist"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Paid:</span>
+                    <span id="receiptPaidMinimalist"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Change:</span>
+                    <span id="receiptChangeMinimalist"></span>
+                </div>
+            </div>
+
+            <div id="receiptFooterMinimalist" style="font-size: 7px; margin-top: 2mm; text-align: center;">
+                <div>Thank you</div>
+            </div>
+        </div>
+
+        <!-- Colorful Design -->
+        <div id="receiptTemplateColorful" class="hidden print-only receipt-paper">
+            <div class="text-center" style="margin-bottom: 1mm; line-height: 0.9; background: #f0f0f0; padding: 1mm;">
+                <div style="font-weight: bold; font-size: 10px; text-align: center;" id="receiptBusinessNameColorful">★ RUMAH MAKAN KLATEN ★</div>
+                <div style="font-size: 7px; text-align: center; background: #e0e0ff; padding: 0.5mm;" id="receiptBusinessAddressColorful">📍 Jl. Contoh No. 123</div>
+                <div style="font-size: 7px; text-align: center;" id="receiptBusinessPhoneColorful">📞 Telp: (0986) 123456</div>
+            </div>
+            
+            <div style="font-size: 7px; margin-bottom: 1mm; background: #ffffcc; padding: 1mm;">
+                <div style="display: flex; justify-content: space-between;">
+                    <span>🎫 No: <span id="receiptTransactionIdColorful"></span></span>
+                    <span>📅 <span id="receiptDateColorful"></span></span>
+                </div>
+                <div>⏰ <span id="receiptTimeColorful"></span></div>
+                <div>👤 Kasir: <span id="receiptCashierColorful">Admin</span></div>
+            </div>
+
+            <div id="receiptItemsColorful" style="font-size: 7px; margin-bottom: 1mm; line-height: 0.8;">
+                <!-- Items will be populated -->
+            </div>
+
+            <div style="font-size: 7px; background: #ffcccc; padding: 1mm;">
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Subtotal:</span>
+                    <span id="receiptSubtotalColorful"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Pajak (10%):</span>
+                    <span id="receiptTaxColorful"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-weight: bold;">
+                    <span>💰 TOTAL:</span>
+                    <span id="receiptTotalColorful"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Bayar:</span>
+                    <span id="receiptPaidColorful"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Kembali:</span>
+                    <span id="receiptChangeColorful"></span>
+                </div>
+            </div>
+
+            <div id="receiptFooterColorful" style="font-size: 7px; margin-top: 1mm; text-align: center; background: #e6ccff; padding: 1mm;">
+                <div>✨ Terima Kasih ✨</div>
+                <div>🌟 Selamat Menikmati 🌟</div>
+            </div>
+        </div>
+
+        <!-- Retro Design -->
+        <div id="receiptTemplateRetro" class="hidden print-only receipt-paper">
+            <div class="text-center" style="margin-bottom: 1mm; line-height: 0.9;">
+                <div style="font-size: 8px; text-align: center;">▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓</div>
+                <div style="font-weight: bold; font-size: 10px; text-align: center;" id="receiptBusinessNameRetro">▓ RUMAH MAKAN KLATEN ▓</div>
+                <div style="font-size: 8px; text-align: center;">▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓</div>
+                <div style="font-size: 7px; text-align: center;" id="receiptBusinessAddressRetro">░ Jl. Contoh No. 123 ░</div>
+                <div style="font-size: 7px; text-align: center;" id="receiptBusinessPhoneRetro">░ Telp: (0986) 123456 ░</div>
+                <div style="font-size: 8px; text-align: center;">▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒</div>
+            </div>
+            
+            <div style="font-size: 7px; margin-bottom: 1mm; text-align: center;">
+                <div>► TRX: <span id="receiptTransactionIdRetro"></span> ◄</div>
+                <div>► <span id="receiptDateRetro"></span> - <span id="receiptTimeRetro"></span> ◄</div>
+                <div>► Kasir: <span id="receiptCashierRetro">Admin</span> ◄</div>
+                <div style="font-size: 8px;">▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒</div>
+            </div>
+
+            <div id="receiptItemsRetro" style="font-size: 7px; margin-bottom: 1mm; line-height: 0.8;">
+                <!-- Items will be populated -->
+            </div>
+
+            <div style="font-size: 8px; text-align: center;">▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓</div>
+            <div style="font-size: 7px;">
+                <div style="display: flex; justify-content: space-between;">
+                    <span>► Subtotal</span>
+                    <span id="receiptSubtotalRetro"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>► Pajak (10%)</span>
+                    <span id="receiptTaxRetro"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-weight: bold;">
+                    <span>► TOTAL</span>
+                    <span id="receiptTotalRetro">◄</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>► Bayar</span>
+                    <span id="receiptPaidRetro">◄</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>► Kembali</span>
+                    <span id="receiptChangeRetro">◄</span>
+                </div>
+            </div>
+
+            <div id="receiptFooterRetro" style="font-size: 7px; margin-top: 1mm; text-align: center;">
+                <div>░░ THANK YOU ░░</div>
+                <div>░░ COME AGAIN ░░</div>
+            </div>
+        </div>
+
+        <!-- Professional Design -->
+        <div id="receiptTemplateProfessional" class="hidden print-only receipt-paper">
+            <div class="text-center" style="margin-bottom: 1mm; line-height: 0.9; border-bottom: 2px solid #000; padding-bottom: 1mm;">
+                <div style="font-weight: bold; font-size: 10px; text-align: center;" id="receiptBusinessNameProfessional">RUMAH MAKAN KLATEN</div>
+                <div style="font-size: 7px; text-align: center;">MANOKWARI</div>
+                <div style="font-size: 7px; text-align: center;" id="receiptBusinessAddressProfessional">Jl. Contoh No. 123</div>
+                <div style="font-size: 7px; text-align: center;" id="receiptBusinessPhoneProfessional">Telp: (0986) 123456</div>
+            </div>
+            
+            <div style="font-size: 7px; margin-bottom: 1mm;">
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Receipt No.</span>
+                    <span id="receiptTransactionIdProfessional"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Date/Time</span>
+                    <span><span id="receiptDateProfessional"></span> <span id="receiptTimeProfessional"></span></span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Cashier</span>
+                    <span id="receiptCashierProfessional">Admin</span>
+                </div>
+            </div>
+
+            <div style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 1mm 0; margin-bottom: 1mm;">
+                <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 7px;">
+                    <span>ITEM</span>
+                    <span>AMOUNT</span>
+                </div>
+                <div id="receiptItemsProfessional" style="font-size: 7px; line-height: 0.8;">
+                    <!-- Items will be populated -->
+                </div>
+            </div>
+
+            <div style="border-bottom: 2px solid #000; padding-bottom: 1mm; font-size: 7px;">
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Subtotal:</span>
+                    <span id="receiptSubtotalProfessional"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Tax (10%):</span>
+                    <span id="receiptTaxProfessional"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-weight: bold;">
+                    <span>TOTAL:</span>
+                    <span id="receiptTotalProfessional"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Paid:</span>
+                    <span id="receiptPaidProfessional"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Change:</span>
+                    <span id="receiptChangeProfessional"></span>
+                </div>
+            </div>
+
+            <div id="receiptFooterProfessional" style="font-size: 7px; margin-top: 1mm; text-align: center;">
+                <div>Thank you for your visit</div>
+                <div>Please come again</div>
+            </div>
+        </div>
+
+        <!-- Cute Design -->
+        <div id="receiptTemplateCute" class="hidden print-only receipt-paper">
+            <div class="text-center" style="margin-bottom: 1mm; line-height: 0.9;">
+                <div style="font-size: 8px; text-align: center;">♡♡♡♡♡♡♡♡♡♡♡♡♡♡♡♡♡♡♡♡♡</div>
+                <div style="font-weight: bold; font-size: 10px; text-align: center;" id="receiptBusinessNameCute">♡ RUMAH MAKAN KLATEN ♡</div>
+                <div style="font-size: 8px; text-align: center;">♡♡♡♡♡♡♡♡♡♡♡♡♡♡♡♡♡♡♡♡♡</div>
+                <div style="font-size: 7px; text-align: center;" id="receiptBusinessAddressCute">🏠 Jl. Contoh No. 123 🏠</div>
+                <div style="font-size: 7px; text-align: center;" id="receiptBusinessPhoneCute">☎️ Telp: (0986) 123456 ☎️</div>
+                <div style="font-size: 8px; text-align: center;">◦•●◉✿◉●•◦•●◉✿◉●•◦•●◉✿◉●•◦</div>
+            </div>
+            
+            <div style="font-size: 7px; margin-bottom: 1mm; text-align: center;">
+                <div>🎫 No: <span id="receiptTransactionIdCute"></span></div>
+                <div>📅 <span id="receiptDateCute"></span> ⏰ <span id="receiptTimeCute"></span></div>
+                <div>👤 Kasir: <span id="receiptCashierCute">Admin</span></div>
+                <div style="font-size: 8px;">◦•●◉✿◉●•◦•●◉✿◉●•◦•●◉✿◉●•◦</div>
+            </div>
+
+            <div id="receiptItemsCute" style="font-size: 7px; margin-bottom: 1mm; line-height: 0.8;">
+                <!-- Items will be populated -->
+            </div>
+
+            <div style="font-size: 8px; text-align: center;">♡♡♡♡♡♡♡♡♡♡♡♡♡♡♡♡♡♡♡♡♡</div>
+            <div style="font-size: 7px;">
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Subtotal:</span>
+                    <span id="receiptSubtotalCute"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Pajak (10%):</span>
+                    <span id="receiptTaxCute"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-weight: bold;">
+                    <span>💖 TOTAL:</span>
+                    <span id="receiptTotalCute">💖</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Bayar:</span>
+                    <span id="receiptPaidCute"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Kembali:</span>
+                    <span id="receiptChangeCute"></span>
+                </div>
+            </div>
+
+            <div id="receiptFooterCute" style="font-size: 7px; margin-top: 1mm; text-align: center;">
+                <div>✨ Terima Kasih Sayang ✨</div>
+                <div>🌸 Sampai Jumpa Lagi 🌸</div>
+            </div>
+        </div>
+
+        <!-- Tech Design -->
+        <div id="receiptTemplateTech" class="hidden print-only receipt-paper" style="background: #000; color: #00ff00;">
+            <div class="text-center" style="margin-bottom: 1mm; line-height: 0.9;">
+                <div style="font-size: 8px; text-align: center;">╔══════════════════════════╗</div>
+                <div style="font-weight: bold; font-size: 10px; text-align: center;" id="receiptBusinessNameTech">║ RUMAH MAKAN KLATEN      ║</div>
+                <div style="font-size: 8px; text-align: center;">║ DIGITAL RECEIPT v2.1    ║</div>
+                <div style="font-size: 8px; text-align: center;">╚══════════════════════════╝</div>
+                <div style="font-size: 7px; text-align: center;">IP: 192.168.1.100</div>
+                <div style="font-size: 7px; text-align: center;" id="receiptBusinessAddressTech">LOC: Jl. Contoh No. 123</div>
+                <div style="font-size: 7px; text-align: center;" id="receiptBusinessPhoneTech">TEL: (0986) 123456</div>
+            </div>
+            
+            <div style="font-size: 7px; margin-bottom: 1mm;">
+                <div style="font-size: 8px; text-align: center;">┌──────────────────────────┐</div>
+                <div>│ TXN_ID: <span id="receiptTransactionIdTech"></span></div>
+                <div>│ TIMESTAMP: <span id="receiptDateTech"></span> <span id="receiptTimeTech"></span></div>
+                <div>│ USER: <span id="receiptCashierTech">admin</span></div>
+                <div style="font-size: 8px; text-align: center;">├──────────────────────────┤</div>
+            </div>
+
+            <div id="receiptItemsTech" style="font-size: 7px; margin-bottom: 1mm; line-height: 0.8;">
+                <!-- Items will be populated -->
+            </div>
+
+            <div style="font-size: 8px; text-align: center;">├──────────────────────────┤</div>
+            <div style="font-size: 7px;">
+                <div>│ SUBTOTAL: <span id="receiptSubtotalTech"></span></div>
+                <div>│ TAX_10PCT: <span id="receiptTaxTech"></span></div>
+                <div style="font-weight: bold;">│ TOTAL_AMOUNT: <span id="receiptTotalTech"></span></div>
+                <div>│ CASH_RECEIVED: <span id="receiptPaidTech"></span></div>
+                <div>│ CHANGE_DUE: <span id="receiptChangeTech"></span></div>
+            </div>
+            <div style="font-size: 8px; text-align: center;">└──────────────────────────┘</div>
+
+            <div id="receiptFooterTech" style="font-size: 7px; margin-top: 1mm; text-align: center;">
+                <div>>>> TRANSACTION_COMPLETE <<<</div>
+                <div>>>> THANK_YOU <<<</div>
             </div>
         </div>
     </div>
@@ -377,6 +1255,16 @@
             phone: '(0986) 123456',
             cashier: 'Admin'
         };
+        
+        // Footer settings
+        let footerSettings = {
+            line1: 'Terima Kasih',
+            line2: 'Selamat Menikmati!',
+            line3: ''
+        };
+        
+        // Receipt design settings
+        let currentReceiptDesign = 'classic';
 
         // Initialize app
         document.addEventListener('DOMContentLoaded', function() {
@@ -384,13 +1272,40 @@
             setInterval(updateTime, 1000);
             showCategory('makanan');
             loadSettings();
+            loadFooterSettings();
+            loadReceiptDesign();
+            
+            // Close navigation menu when clicking outside
+            document.addEventListener('click', function(event) {
+                const navMenu = document.getElementById('navigationMenu');
+                const navBtn = document.getElementById('navMenuBtn');
+                if (!navBtn.contains(event.target) && !navMenu.contains(event.target)) {
+                    closeNavigationMenu();
+                }
+            });
         });
+        
+        function toggleNavigationMenu() {
+            const menu = document.getElementById('navigationMenu');
+            menu.classList.toggle('hidden');
+        }
+        
+        function closeNavigationMenu() {
+            document.getElementById('navigationMenu').classList.add('hidden');
+        }
         
         function loadSettings() {
             const saved = localStorage.getItem('businessSettings');
             if (saved) {
                 businessSettings = JSON.parse(saved);
                 updateDisplayedSettings();
+            }
+        }
+        
+        function loadFooterSettings() {
+            const saved = localStorage.getItem('footerSettings');
+            if (saved) {
+                footerSettings = JSON.parse(saved);
             }
         }
         
@@ -452,6 +1367,77 @@
             showNotification('Pengaturan berhasil disimpan!', 'success');
         }
         
+        function openFooterModal() {
+            // Load current footer settings into form
+            document.getElementById('footerLine1').value = footerSettings.line1;
+            document.getElementById('footerLine2').value = footerSettings.line2;
+            document.getElementById('footerLine3').value = footerSettings.line3;
+            
+            // Update preview
+            updateFooterPreview();
+            
+            document.getElementById('footerModal').classList.remove('hidden');
+            document.getElementById('footerModal').classList.add('flex');
+        }
+        
+        function closeFooterModal() {
+            document.getElementById('footerModal').classList.add('hidden');
+            document.getElementById('footerModal').classList.remove('flex');
+        }
+        
+        function updateFooterPreview() {
+            const line1 = document.getElementById('footerLine1').value || 'Terima Kasih';
+            const line2 = document.getElementById('footerLine2').value || 'Selamat Menikmati!';
+            const line3 = document.getElementById('footerLine3').value;
+            
+            document.getElementById('footerPreviewLine1').textContent = line1;
+            document.getElementById('footerPreviewLine2').textContent = line2;
+            
+            const line3Element = document.getElementById('footerPreviewLine3');
+            if (line3.trim()) {
+                line3Element.textContent = line3;
+                line3Element.classList.remove('hidden');
+            } else {
+                line3Element.classList.add('hidden');
+            }
+        }
+        
+        function resetFooterToDefault() {
+            document.getElementById('footerLine1').value = 'Terima Kasih';
+            document.getElementById('footerLine2').value = 'Selamat Menikmati!';
+            document.getElementById('footerLine3').value = '';
+            updateFooterPreview();
+        }
+        
+        function saveFooterSettings() {
+            const line1 = document.getElementById('footerLine1').value.trim() || 'Terima Kasih';
+            const line2 = document.getElementById('footerLine2').value.trim() || 'Selamat Menikmati!';
+            const line3 = document.getElementById('footerLine3').value.trim();
+            
+            footerSettings = {
+                line1: line1,
+                line2: line2,
+                line3: line3
+            };
+            
+            // Save to localStorage
+            localStorage.setItem('footerSettings', JSON.stringify(footerSettings));
+            
+            closeFooterModal();
+            showNotification('Footer struk berhasil disimpan!', 'success');
+        }
+        
+        // Add event listeners for real-time preview
+        document.addEventListener('DOMContentLoaded', function() {
+            const footerInputs = ['footerLine1', 'footerLine2', 'footerLine3'];
+            footerInputs.forEach(inputId => {
+                const input = document.getElementById(inputId);
+                if (input) {
+                    input.addEventListener('input', updateFooterPreview);
+                }
+            });
+        });
+        
         function generateTransactionId() {
             const now = new Date();
             const dateStr = now.toISOString().slice(2, 10).replace(/-/g, ''); // YYMMDD (6 digits)
@@ -498,9 +1484,14 @@
                     <div class="flex justify-between items-start mb-2">
                         <h3 class="font-semibold text-gray-800">${item.name}</h3>
                         ${isEditMode ? `
-                            <button onclick="editItem(${item.id})" class="text-blue-600 hover:text-blue-800 text-sm">
-                                ✏️
-                            </button>
+                            <div class="flex space-x-1">
+                                <button onclick="editItem(${item.id})" class="text-blue-600 hover:text-blue-800 text-sm px-2 py-1 rounded hover:bg-blue-50" title="Edit Menu">
+                                    ✏️
+                                </button>
+                                <button onclick="deleteItem(${item.id})" class="text-red-600 hover:text-red-800 text-sm px-2 py-1 rounded hover:bg-red-50" title="Hapus Menu">
+                                    🗑️
+                                </button>
+                            </div>
                         ` : ''}
                     </div>
                     <div class="flex justify-between items-center">
@@ -520,36 +1511,153 @@
         function toggleEditMode() {
             isEditMode = !isEditMode;
             const btn = document.getElementById('editModeBtn');
+            const editActions = document.getElementById('editModeActions');
             
             if (isEditMode) {
                 btn.textContent = '✅ Selesai Edit';
                 btn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
                 btn.classList.add('bg-green-600', 'hover:bg-green-700');
+                editActions.classList.remove('hidden');
             } else {
                 btn.textContent = '✏️ Edit Menu';
                 btn.classList.remove('bg-green-600', 'hover:bg-green-700');
                 btn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                editActions.classList.add('hidden');
             }
             
             renderMenu();
         }
 
+        let editingMenuId = null;
+        
+        function openAddMenuModal() {
+            editingMenuId = null;
+            document.getElementById('menuModalTitle').textContent = '➕ Tambah Menu Baru';
+            document.getElementById('menuName').value = '';
+            document.getElementById('menuPrice').value = '';
+            document.getElementById('menuCategory').value = currentCategory;
+            
+            document.getElementById('addMenuModal').classList.remove('hidden');
+            document.getElementById('addMenuModal').classList.add('flex');
+            document.getElementById('menuName').focus();
+        }
+        
+        function closeAddMenuModal() {
+            document.getElementById('addMenuModal').classList.add('hidden');
+            document.getElementById('addMenuModal').classList.remove('flex');
+            editingMenuId = null;
+        }
+        
         function editItem(id) {
             const item = findItemById(id);
-            const newName = prompt('Edit nama menu:', item.name);
-            if (newName && newName.trim()) {
-                item.name = newName.trim();
-                renderMenu();
+            if (!item) return;
+            
+            editingMenuId = id;
+            document.getElementById('menuModalTitle').textContent = '✏️ Edit Menu';
+            document.getElementById('menuName').value = item.name;
+            document.getElementById('menuPrice').value = item.price;
+            document.getElementById('menuCategory').value = item.category;
+            
+            document.getElementById('addMenuModal').classList.remove('hidden');
+            document.getElementById('addMenuModal').classList.add('flex');
+            document.getElementById('menuName').focus();
+        }
+        
+        function deleteItem(id) {
+            const item = findItemById(id);
+            if (!item) return;
+            
+            // Create custom confirmation modal instead of browser confirm
+            const confirmModal = document.createElement('div');
+            confirmModal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            confirmModal.innerHTML = `
+                <div class="bg-white rounded-xl p-6 max-w-sm w-full mx-4">
+                    <h3 class="text-lg font-bold mb-3 text-red-600">🗑️ Hapus Menu</h3>
+                    <p class="text-gray-700 mb-4">Yakin ingin menghapus menu "<strong>${item.name}</strong>"?</p>
+                    <div class="flex space-x-3">
+                        <button onclick="this.closest('.fixed').remove()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 rounded-lg font-medium transition-colors">
+                            Batal
+                        </button>
+                        <button onclick="confirmDeleteItem(${id}); this.closest('.fixed').remove()" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg font-medium transition-colors">
+                            Hapus
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(confirmModal);
+        }
+        
+        function confirmDeleteItem(id) {
+            // Remove from current order if exists
+            currentOrder = currentOrder.filter(orderItem => orderItem.id !== id);
+            
+            // Remove from menu data
+            for (let category in menuData) {
+                menuData[category] = menuData[category].filter(item => item.id !== id);
             }
+            
+            renderMenu();
+            renderOrder();
+            showNotification('Menu berhasil dihapus!', 'success');
+        }
+        
+        function saveMenu() {
+            const name = document.getElementById('menuName').value.trim();
+            const price = parseInt(document.getElementById('menuPrice').value);
+            const category = document.getElementById('menuCategory').value;
+            
+            if (!name) {
+                showNotification('Nama menu tidak boleh kosong!', 'error');
+                return;
+            }
+            
+            if (!price || price <= 0) {
+                showNotification('Harga harus lebih dari 0!', 'error');
+                return;
+            }
+            
+            if (editingMenuId) {
+                // Edit existing menu
+                const item = findItemById(editingMenuId);
+                if (item) {
+                    // If category changed, move item to new category
+                    if (item.category !== category) {
+                        // Remove from old category
+                        menuData[item.category] = menuData[item.category].filter(i => i.id !== editingMenuId);
+                        
+                        // Add to new category
+                        item.category = category;
+                        menuData[category].push(item);
+                    }
+                    
+                    item.name = name;
+                    item.price = price;
+                    item.category = category;
+                    
+                    showNotification('Menu berhasil diperbarui!', 'success');
+                }
+            } else {
+                // Add new menu
+                const newId = Math.max(...Object.values(menuData).flat().map(item => item.id)) + 1;
+                const newItem = {
+                    id: newId,
+                    name: name,
+                    price: price,
+                    category: category
+                };
+                
+                menuData[category].push(newItem);
+                showNotification('Menu baru berhasil ditambahkan!', 'success');
+            }
+            
+            renderMenu();
+            closeAddMenuModal();
         }
 
         function editPrice(id) {
-            const item = findItemById(id);
-            const newPrice = prompt('Edit harga (tanpa Rp):', item.price);
-            if (newPrice && !isNaN(newPrice) && parseInt(newPrice) > 0) {
-                item.price = parseInt(newPrice);
-                renderMenu();
-            }
+            // This function is kept for backward compatibility but now opens the edit modal
+            editItem(id);
         }
 
         function findItemById(id) {
@@ -863,6 +1971,258 @@
             }
         }
         
+        function openReceiptDesignModal() {
+            document.getElementById('receiptDesignModal').classList.remove('hidden');
+            document.getElementById('receiptDesignModal').classList.add('flex');
+        }
+        
+        function closeReceiptDesignModal() {
+            document.getElementById('receiptDesignModal').classList.add('hidden');
+            document.getElementById('receiptDesignModal').classList.remove('flex');
+        }
+        
+        function selectReceiptDesign(design) {
+            currentReceiptDesign = design;
+            
+            // Update display
+            const designNames = {
+                'classic': 'Klasik',
+                'modern': 'Modern',
+                'elegant': 'Elegan',
+                'minimalist': 'Minimalis',
+                'colorful': 'Berwarna',
+                'retro': 'Retro',
+                'professional': 'Profesional',
+                'cute': 'Imut',
+                'tech': 'Tech'
+            };
+            
+            document.getElementById('currentDesign').textContent = designNames[design];
+            
+            // Save to localStorage
+            localStorage.setItem('receiptDesign', design);
+            
+            closeReceiptDesignModal();
+            showNotification(`Desain struk berhasil diubah ke ${designNames[design]}!`, 'success');
+        }
+        
+        function loadReceiptDesign() {
+            const saved = localStorage.getItem('receiptDesign');
+            if (saved) {
+                currentReceiptDesign = saved;
+                const designNames = {
+                    'classic': 'Klasik',
+                    'modern': 'Modern',
+                    'elegant': 'Elegan',
+                    'minimalist': 'Minimalis',
+                    'colorful': 'Berwarna',
+                    'retro': 'Retro',
+                    'professional': 'Profesional',
+                    'cute': 'Imut',
+                    'tech': 'Tech'
+                };
+                document.getElementById('currentDesign').textContent = designNames[saved];
+            }
+        }
+        
+        function getReceiptTemplateId() {
+            switch(currentReceiptDesign) {
+                case 'modern': return 'receiptTemplateModern';
+                case 'elegant': return 'receiptTemplateElegant';
+                case 'minimalist': return 'receiptTemplateMinimalist';
+                case 'colorful': return 'receiptTemplateColorful';
+                case 'retro': return 'receiptTemplateRetro';
+                case 'professional': return 'receiptTemplateProfessional';
+                case 'cute': return 'receiptTemplateCute';
+                case 'tech': return 'receiptTemplateTech';
+                default: return 'receiptTemplate';
+            }
+        }
+        
+        function updateReceiptTemplate(transactionId, displayDate, displayTime, subtotal, tax, total, cashReceived, change) {
+            const suffix = currentReceiptDesign === 'classic' ? '' : currentReceiptDesign.charAt(0).toUpperCase() + currentReceiptDesign.slice(1);
+            
+            // Update business info based on design
+            let businessName = businessSettings.name;
+            let businessAddress = businessSettings.address;
+            let businessPhone = `Telp: ${businessSettings.phone}`;
+            
+            if (currentReceiptDesign === 'modern') {
+                businessName = `🍽️ ${businessSettings.name}`;
+                businessAddress = `📍 ${businessSettings.address}`;
+                businessPhone = `📞 Telp: ${businessSettings.phone}`;
+            } else if (currentReceiptDesign === 'colorful') {
+                businessName = `★ ${businessSettings.name} ★`;
+                businessAddress = `📍 ${businessSettings.address}`;
+                businessPhone = `📞 Telp: ${businessSettings.phone}`;
+            } else if (currentReceiptDesign === 'retro') {
+                businessName = `▓ ${businessSettings.name} ▓`;
+                businessAddress = `░ ${businessSettings.address} ░`;
+                businessPhone = `░ Telp: ${businessSettings.phone} ░`;
+            } else if (currentReceiptDesign === 'cute') {
+                businessName = `♡ ${businessSettings.name} ♡`;
+                businessAddress = `🏠 ${businessSettings.address} 🏠`;
+                businessPhone = `☎️ Telp: ${businessSettings.phone} ☎️`;
+            } else if (currentReceiptDesign === 'tech') {
+                businessName = `║ ${businessSettings.name}      ║`;
+                businessAddress = `LOC: ${businessSettings.address}`;
+                businessPhone = `TEL: ${businessSettings.phone}`;
+            } else if (currentReceiptDesign === 'minimalist') {
+                businessName = 'RM KLATEN';
+            }
+            
+            document.getElementById(`receiptBusinessName${suffix}`).textContent = businessName;
+            document.getElementById(`receiptBusinessAddress${suffix}`).textContent = businessAddress;
+            if (document.getElementById(`receiptBusinessPhone${suffix}`)) {
+                document.getElementById(`receiptBusinessPhone${suffix}`).textContent = businessPhone;
+            }
+            
+            // Update transaction info
+            document.getElementById(`receiptTransactionId${suffix}`).textContent = transactionId;
+            document.getElementById(`receiptDate${suffix}`).textContent = displayDate;
+            if (document.getElementById(`receiptTime${suffix}`)) {
+                document.getElementById(`receiptTime${suffix}`).textContent = displayTime;
+            }
+            document.getElementById(`receiptCashier${suffix}`).textContent = businessSettings.cashier;
+            
+            // Update totals
+            document.getElementById(`receiptSubtotal${suffix}`).textContent = `Rp ${subtotal.toLocaleString('id-ID')}`;
+            document.getElementById(`receiptTax${suffix}`).textContent = `Rp ${tax.toLocaleString('id-ID')}`;
+            document.getElementById(`receiptTotal${suffix}`).textContent = `Rp ${total.toLocaleString('id-ID')}`;
+            document.getElementById(`receiptPaid${suffix}`).textContent = `Rp ${cashReceived.toLocaleString('id-ID')}`;
+            document.getElementById(`receiptChange${suffix}`).textContent = `Rp ${change.toLocaleString('id-ID')}`;
+            
+            // Update footer based on design and settings
+            updateReceiptFooter(suffix);
+            
+            // Populate items based on design
+            let itemsHtml = '';
+            
+            if (currentReceiptDesign === 'modern') {
+                itemsHtml = currentOrder.map((item, index) => `
+                    <div style="background: #f0f0f0; padding: 1mm; margin-bottom: 1px;">
+                        <div>🍛 ${item.name}</div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>${item.quantity} x Rp ${item.price.toLocaleString('id-ID')}</span>
+                            <span>Rp ${(item.quantity * item.price).toLocaleString('id-ID')}</span>
+                        </div>
+                    </div>
+                    ${index < currentOrder.length - 1 ? '<div style="border-bottom: 1px dashed #000; margin: 1mm 0;"></div>' : ''}
+                `).join('');
+            } else if (currentReceiptDesign === 'colorful') {
+                itemsHtml = currentOrder.map((item, index) => `
+                    <div style="background: #ccffcc; padding: 1mm; margin-bottom: 1px;">
+                        <div>🍛 ${item.name}</div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>${item.quantity} porsi</span>
+                            <span>Rp ${(item.quantity * item.price).toLocaleString('id-ID')}</span>
+                        </div>
+                    </div>
+                    ${index < currentOrder.length - 1 ? '<div style="border-bottom: 1px dashed #000; margin: 1mm 0;"></div>' : ''}
+                `).join('');
+            } else if (currentReceiptDesign === 'retro') {
+                itemsHtml = currentOrder.map((item, index) => `
+                    <div>► ${item.name}</div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>  ${item.quantity} x ${item.price.toLocaleString('id-ID')}</span>
+                        <span>${(item.quantity * item.price).toLocaleString('id-ID')} ◄</span>
+                    </div>
+                    ${index < currentOrder.length - 1 ? '<div style="font-size: 8px; text-align: center;">▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒</div>' : ''}
+                `).join('');
+            } else if (currentReceiptDesign === 'professional') {
+                itemsHtml = currentOrder.map((item, index) => `
+                    <div>${item.name}</div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>${item.quantity} x Rp ${item.price.toLocaleString('id-ID')}</span>
+                        <span>Rp ${(item.quantity * item.price).toLocaleString('id-ID')}</span>
+                    </div>
+                    ${index < currentOrder.length - 1 ? '<div style="border-bottom: 1px solid #ccc; margin: 1mm 0;"></div>' : ''}
+                `).join('');
+            } else if (currentReceiptDesign === 'cute') {
+                itemsHtml = currentOrder.map((item, index) => `
+                    <div style="text-align: center; background: #ffe6f2; padding: 1mm;">
+                        <div>🍛 ${item.name} 🍛</div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>${item.quantity} porsi x Rp ${item.price.toLocaleString('id-ID')}</span>
+                            <span>Rp ${(item.quantity * item.price).toLocaleString('id-ID')}</span>
+                        </div>
+                    </div>
+                    ${index < currentOrder.length - 1 ? '<div style="font-size: 8px; text-align: center;">◦•●◉✿◉●•◦•●◉✿◉●•◦</div>' : ''}
+                `).join('');
+            } else if (currentReceiptDesign === 'tech') {
+                itemsHtml = currentOrder.map((item, index) => `
+                    <div>│ ITEM: ${item.name.replace(/\s/g, '_')}</div>
+                    <div>│ QTY: ${item.quantity} PRICE: ${item.price}</div>
+                    <div>│ SUBTOTAL: ${item.quantity * item.price}</div>
+                    ${index < currentOrder.length - 1 ? '<div style="font-size: 8px; text-align: center;">├──────────────────────────┤</div>' : ''}
+                `).join('');
+            } else if (currentReceiptDesign === 'minimalist') {
+                itemsHtml = currentOrder.map((item, index) => `
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>${item.name}</span>
+                        <span>${(item.quantity * item.price).toLocaleString('id-ID')}</span>
+                    </div>
+                    <div style="font-size: 6px; color: #666;">${item.quantity}x</div>
+                    ${index < currentOrder.length - 1 ? '<div style="border-bottom: 1px solid #ccc; margin: 1mm 0;"></div>' : ''}
+                `).join('');
+            } else {
+                // Classic and elegant designs
+                itemsHtml = currentOrder.map((item, index) => `
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 1px;">
+                        <span>${item.name}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 1px;">
+                        <span>${item.quantity} x Rp ${item.price.toLocaleString('id-ID')}</span>
+                        <span>Rp ${(item.quantity * item.price).toLocaleString('id-ID')}</span>
+                    </div>
+                    ${index < currentOrder.length - 1 ? '<div style="border-bottom: 1px dashed #000; margin: 1mm 0;"></div>' : ''}
+                `).join('');
+            }
+            
+            document.getElementById(`receiptItems${suffix}`).innerHTML = itemsHtml;
+        }
+        
+        function updateReceiptFooter(suffix) {
+            const footerElement = document.getElementById(`receiptFooter${suffix}`);
+            if (!footerElement) return;
+            
+            let footerHtml = '';
+            
+            // Apply design-specific styling to footer text
+            if (currentReceiptDesign === 'modern') {
+                if (footerSettings.line1) footerHtml += `<div>🙏 ${footerSettings.line1}</div>`;
+                if (footerSettings.line2) footerHtml += `<div>😊 ${footerSettings.line2}</div>`;
+                if (footerSettings.line3) footerHtml += `<div>✨ ${footerSettings.line3}</div>`;
+            } else if (currentReceiptDesign === 'elegant') {
+                if (footerSettings.line1) footerHtml += `<div>~ ${footerSettings.line1} ~</div>`;
+                if (footerSettings.line2) footerHtml += `<div>~ ${footerSettings.line2} ~</div>`;
+                if (footerSettings.line3) footerHtml += `<div>~ ${footerSettings.line3} ~</div>`;
+            } else if (currentReceiptDesign === 'colorful') {
+                if (footerSettings.line1) footerHtml += `<div>✨ ${footerSettings.line1} ✨</div>`;
+                if (footerSettings.line2) footerHtml += `<div>🌟 ${footerSettings.line2} 🌟</div>`;
+                if (footerSettings.line3) footerHtml += `<div>⭐ ${footerSettings.line3} ⭐</div>`;
+            } else if (currentReceiptDesign === 'retro') {
+                if (footerSettings.line1) footerHtml += `<div>░░ ${footerSettings.line1.toUpperCase()} ░░</div>`;
+                if (footerSettings.line2) footerHtml += `<div>░░ ${footerSettings.line2.toUpperCase()} ░░</div>`;
+                if (footerSettings.line3) footerHtml += `<div>░░ ${footerSettings.line3.toUpperCase()} ░░</div>`;
+            } else if (currentReceiptDesign === 'cute') {
+                if (footerSettings.line1) footerHtml += `<div>✨ ${footerSettings.line1} Sayang ✨</div>`;
+                if (footerSettings.line2) footerHtml += `<div>🌸 ${footerSettings.line2} 🌸</div>`;
+                if (footerSettings.line3) footerHtml += `<div>💖 ${footerSettings.line3} 💖</div>`;
+            } else if (currentReceiptDesign === 'tech') {
+                if (footerSettings.line1) footerHtml += `<div>>>> ${footerSettings.line1.toUpperCase().replace(/\s/g, '_')} <<<</div>`;
+                if (footerSettings.line2) footerHtml += `<div>>>> ${footerSettings.line2.toUpperCase().replace(/\s/g, '_')} <<<</div>`;
+                if (footerSettings.line3) footerHtml += `<div>>>> ${footerSettings.line3.toUpperCase().replace(/\s/g, '_')} <<<</div>`;
+            } else {
+                // Classic, minimalist, and professional designs
+                if (footerSettings.line1) footerHtml += `<div>${footerSettings.line1}</div>`;
+                if (footerSettings.line2) footerHtml += `<div>${footerSettings.line2}</div>`;
+                if (footerSettings.line3) footerHtml += `<div>${footerSettings.line3}</div>`;
+            }
+            
+            footerElement.innerHTML = footerHtml;
+        }
+        
         function showNotification(message, type = 'info') {
             // Create notification element
             const notification = document.createElement('div');
@@ -986,46 +2346,16 @@
                     await printToBluetooth(receiptText);
                     showNotification('Struk berhasil dicetak via Bluetooth!', 'success');
                 } else {
-                    // Fallback to browser print
+                    // Fallback to browser print with selected design
+                    updateReceiptTemplate(transactionId, displayDate, displayTime, subtotal, tax, total, cashReceived, change);
                     
-                    // Update business info
-                    document.getElementById('receiptBusinessName').textContent = businessSettings.name;
-                    document.getElementById('receiptBusinessAddress').textContent = businessSettings.address;
-                    document.getElementById('receiptBusinessPhone').textContent = `Telp: ${businessSettings.phone}`;
-                    
-                    // Update transaction info
-                    document.getElementById('receiptTransactionId').textContent = transactionId;
-                    document.getElementById('receiptDate').textContent = displayDate;
-                    document.getElementById('receiptTime').textContent = displayTime;
-                    document.getElementById('receiptCashier').textContent = businessSettings.cashier;
-                    
-                    // Update totals
-                    document.getElementById('receiptSubtotal').textContent = `Rp ${subtotal.toLocaleString('id-ID')}`;
-                    document.getElementById('receiptTax').textContent = `Rp ${tax.toLocaleString('id-ID')}`;
-                    document.getElementById('receiptTotal').textContent = `Rp ${total.toLocaleString('id-ID')}`;
-                    document.getElementById('receiptPaid').textContent = `Rp ${cashReceived.toLocaleString('id-ID')}`;
-                    document.getElementById('receiptChange').textContent = `Rp ${change.toLocaleString('id-ID')}`;
-                    
-                    // Populate items with tighter spacing and separators
-                    const itemsHtml = currentOrder.map((item, index) => `
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 1px;">
-                            <span>${item.name}</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 1px;">
-                            <span>${item.quantity} x Rp ${item.price.toLocaleString('id-ID')}</span>
-                            <span>Rp ${(item.quantity * item.price).toLocaleString('id-ID')}</span>
-                        </div>
-                        ${index < currentOrder.length - 1 ? '<div style="border-bottom: 1px dashed #000; margin: 1mm 0;"></div>' : ''}
-                    `).join('');
-                    
-                    document.getElementById('receiptItems').innerHTML = itemsHtml;
-                    
-                    // Show receipt and print
-                    document.getElementById('receiptTemplate').classList.remove('hidden');
+                    // Show selected receipt template and print
+                    const templateId = getReceiptTemplateId();
+                    document.getElementById(templateId).classList.remove('hidden');
                     window.print();
                     
                     setTimeout(() => {
-                        document.getElementById('receiptTemplate').classList.add('hidden');
+                        document.getElementById(templateId).classList.add('hidden');
                     }, 1000);
                     
                     showNotification('Struk dicetak via browser. Hubungkan printer Bluetooth untuk cetak langsung.', 'info');
@@ -1042,5 +2372,5 @@
             }
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'991a12bbc1c7ea87',t:'MTc2MDk3OTY0NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'991ce48cc2909ca7',t:'MTc2MTAwOTIxMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
